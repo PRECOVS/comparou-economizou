@@ -97,26 +97,24 @@
 
 
 /* ===========================
-      CARROSSEL (BANNER 1920×600 SEM CORTE)
+      CARROSSEL (100% LARGURA)
 =========================== */
 .carousel {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: #000; /* evita fundo branco caso a imagem não ocupe tudo */
+  background: #000; /* evita fundo branco */
 }
 
 .carousel-track {
   display: flex;
-  width: 300%;
   transition: transform 0.5s ease;
 }
 
-/* Mostra o banner INTEIRO, sem cortes, respeitando 1920×600 */
 .carousel img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  width: 100%;        /* mostra toda a largura */
+  height: auto;       /* altura reduz sem distorcer */
+  object-fit: contain; /* nunca corta a imagem */
   display: block;
 }
 
@@ -235,7 +233,7 @@
 
 
 <!-- ===========================
-      CARROSSEL 100% DO BANNER
+      CARROSSEL
 =========================== -->
 <section class="carousel">
 
@@ -307,7 +305,8 @@ document.getElementById("ano").textContent = new Date().getFullYear();
 
 let index = 0;
 const track = document.querySelector('.carousel-track');
-const total = 3;
+const slides = document.querySelectorAll('.carousel img');
+const total = slides.length;
 
 function updateCarousel() {
   track.style.transform = `translateX(-${index * 100}%)`;
@@ -323,11 +322,11 @@ document.querySelector('.prev').onclick = () => {
   updateCarousel();
 };
 
-// Auto-slide
+// Auto-slide a cada 5 segundos
 setInterval(() => {
   index = (index + 1) % total;
   updateCarousel();
-}, 4000);
+}, 5000);
 </script>
 
 </body>
