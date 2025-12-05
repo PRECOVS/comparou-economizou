@@ -1,11 +1,733 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Preço VS - Melhor Preço Dentre os SuperMercados</title>
+  <meta charset="UTF-8">
+  <title>PreçoVs – Comparou, Pagou Menos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primaria: #2563eb;
+      --primaria-escura: #1d4ed8;
+      --secundaria: #16a34a;
+      --fundo: #f3f4f6;
+      --texto: #111827;
+      --cinza: #6b7280;
+      --branco: #ffffff;
+      --perigo: #b91c1c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fundo);
+      color: var(--texto);
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    header {
+      background: var(--branco);
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: 0.04em;
+      color: var(--primaria);
+    }
+
+    .logo span {
+      color: var(--secundaria);
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      font-size: 0.95rem;
+    }
+
+    nav a {
+      color: var(--cinza);
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: var(--primaria);
+    }
+
+    .btn-whatsapp {
+      background: #22c55e;
+      color: var(--branco);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-whatsapp:hover {
+      filter: brightness(0.9);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #eff6ff, #ecfdf5);
+      padding: 32px 0 40px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--cinza);
+      margin-bottom: 16px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--branco);
+      border: 1px solid #e5e7eb;
+      color: var(--cinza);
+    }
+
+    .badge-strong {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-primary {
+      background: var(--primaria);
+      color: var(--branco);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primaria-escura);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primaria);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 1px solid var(--primaria);
+      cursor: pointer;
+    }
+
+    .hero-note {
+      font-size: 0.8rem;
+      color: var(--cinza);
+      margin-top: 10px;
+    }
+
+    .hero-card {
+      background: var(--branco);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+    }
+
+    .hero-card-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .hero-card-step {
+      font-size: 0.9rem;
+      color: var(--cinza);
+      margin-bottom: 4px;
+    }
+
+    .steps {
+      margin-top: 12px;
+      border-top: 1px dashed #e5e7eb;
+      padding-top: 12px;
+      font-size: 0.85rem;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .step-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--primaria);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      color: var(--cinza);
+    }
+
+    section {
+      padding: 28px 0;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--cinza);
+      margin-bottom: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--branco);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .card p {
+      color: var(--cinza);
+      font-size: 0.86rem;
+    }
+
+    .highlight {
+      color: var(--secundaria);
+      font-weight: 600;
+    }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .list {
+      list-style: none;
+      padding-left: 0;
+      font-size: 0.9rem;
+    }
+
+    .list li {
+      margin-bottom: 6px;
+      color: var(--cinza);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    th, td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #eef2ff;
+      color: #4338ca;
+    }
+
+    .cta-box {
+      background: #0f172a;
+      color: var(--branco);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .cta-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .cta-text {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-cta-whats {
+      background: #22c55e;
+      color: var(--branco);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-cta-whats:hover {
+      filter: brightness(0.9);
+    }
+
+    .btn-cta-sec {
+      background: transparent;
+      border-radius: 999px;
+      border: 1px solid #64748b;
+      color: #e5e7eb;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    footer {
+      background: #020617;
+      color: #9ca3af;
+      padding: 18px 0 12px;
+      font-size: 0.75rem;
+      margin-top: 10px;
+    }
+
+    .footer-top {
+      margin-bottom: 10px;
+    }
+
+    .footer-title {
+      font-weight: 700;
+      color: #e5e7eb;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+    }
+
+    .legal {
+      margin-top: 6px;
+      color: #9ca3af;
+    }
+
+    .legal strong {
+      color: #e5e7eb;
+    }
+
+    .legal-warning {
+      color: #fecaca;
+      margin-top: 4px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #111827;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #9ca3af;
+    }
+
+    @media (max-width: 800px) {
+      .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .grid-3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .two-cols {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .header-inner {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 22px;
+      }
+
+      .hero-title {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <p>Testando nosso site</p>
+
+<header>
+  <div class="container header-inner">
+    <div class="logo">Preço<span>Vs</span></div>
+    <nav>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#vantagens">Vantagens</a>
+      <a href="#exemplo">Exemplo</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a class="btn-whatsapp" href="https://wa.me/5599999999999?text=Ol%C3%A1%2C+quero+fazer+minha+lista+no+Pre%C3%A7oVs" target="_blank" rel="noopener noreferrer">
+      WhatsApp
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <h1 class="hero-title">Comparador inteligente de lista de compras.</h1>
+        <p class="hero-subtitle">
+          Você manda a lista. O PreçoVs compara em vários mercados da sua região
+          e retorna o menor total, já com a sua taxa de serviço combinada.
+        </p>
+
+        <div class="hero-badges">
+          <span class="badge badge-strong">Intermediador independente</span>
+          <span class="badge">Sem ser supermercado</span>
+          <span class="badge">Sem estoque, sem entrega própria</span>
+        </div>
+
+        <div class="hero-actions">
+          <a class="btn-primary" href="https://wa.me/5599999999999?text=Quero+enviar+minha+lista+para+o+Pre%C3%A7oVs" target="_blank" rel="noopener noreferrer">
+            Enviar lista pelo WhatsApp
+          </a>
+          <button class="btn-outline" type="button" onclick="document.getElementById('como-funciona').scrollIntoView({behavior: 'smooth'})">
+            Ver como funciona
+          </button>
+        </div>
+
+        <p class="hero-note">
+          Não somos supermercado. Não temos vínculo com as marcas citadas.
+        </p>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-title">Simulação rápida</div>
+        <p class="hero-card-step">
+          Lista de exemplo: <strong>limpeza + mercearia</strong>
+        </p>
+
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-text">Você envia a lista (foto, texto ou Excel) pelo WhatsApp.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-text">Nós pesquisamos os preços em mercados da sua região e montamos o menor total possível.</div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-text">Você aprova, faz o pagamento e recebe direto do(s) mercado(s) escolhido(s).</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section id="como-funciona">
+    <div class="container">
+      <h2 class="section-title">Como o PreçoVs trabalha para você</h2>
+      <p class="section-subtitle">
+        Nós não vendemos produtos. Nós intermedíamos a comparação e a compra, para você parar de perder tempo pulando de mercado em mercado.
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">1. Você manda a lista</div>
+          <p>
+            Envie sua lista de compras (limpeza, mercearia, utilidades, etc.) por texto, foto ou planilha.
+            Quanto mais detalhada, mais precisa fica a comparação.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Nós comparamos por você</div>
+          <p>
+            Pesquisamos os preços em diferentes mercados disponíveis online na sua região
+            e montamos o cenário de menor custo total possível naquele momento.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">3. Você aprova e economiza</div>
+          <p>
+            Enviamos o resumo com o valor total e como será feita a compra.
+            Você aprova, paga, e o(s) mercado(s) faz(em) a entrega até você.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VANTAGENS -->
+  <section id="vantagens">
+    <div class="container">
+      <h2 class="section-title">Por que usar o PreçoVs?</h2>
+      <p class="section-subtitle">
+        Um intermediador pensado para quem quer pagar menos sem virar escravo de folheto, app e comparação manual.
+      </p>
+
+      <div class="two-cols">
+        <div class="card">
+          <div class="card-title">Para quem é</div>
+          <ul class="list">
+            <li>Famílias que fazem compra do mês e querem reduzir o valor da lista.</li>
+            <li>Pessoas sem tempo para ficar pesquisando mercado por mercado.</li>
+            <li>Pequenos estabelecimentos que querem otimizar custo de reposição.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">O que você ganha</div>
+          <ul class="list">
+            <li><span class="highlight">Menos gasto</span> na compra total, não só em um item.</li>
+            <li><span class="highlight">Menos tempo</span> perdido com comparação manual.</li>
+            <li><span class="highlight">Mais controle</span> de quanto a sua lista realmente custa.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXEMPLO DE COMPARAÇÃO -->
+  <section id="exemplo">
+    <div class="container">
+      <h2 class="section-title">Exemplo de comparação (valores fictícios)</h2>
+      <p class="section-subtitle">
+        Apenas para demonstrar a lógica do PreçoVs. Os preços abaixo são ilustrativos e não correspondem a nenhum mercado real.
+      </p>
+
+      <span class="badge-tag">Exemplo ilustrativo</span>
+
+      <table>
+        <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Mercado A</th>
+          <th>Mercado B</th>
+          <th>Mercado C</th>
+          <th>Escolha do PreçoVs</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Detergente neutro 500ml</td>
+          <td>R$ 2,59</td>
+          <td>R$ 2,39</td>
+          <td>R$ 2,79</td>
+          <td><span class="pill">Mercado B – R$ 2,39</span></td>
+        </tr>
+        <tr>
+          <td>Sabão em pó 1kg</td>
+          <td>R$ 9,90</td>
+          <td>R$ 10,49</td>
+          <td>R$ 9,49</td>
+          <td><span class="pill">Mercado C – R$ 9,49</span></td>
+        </tr>
+        <tr>
+          <td>Arroz 5kg</td>
+          <td>R$ 28,90</td>
+          <td>R$ 29,50</td>
+          <td>R$ 27,99</td>
+          <td><span class="pill">Mercado C – R$ 27,99</span></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.8rem;color:#6b7280;margin-top:6px;">
+        Observação: na prática, o PreçoVs considera não só o preço de cada item, mas também o frete e a forma de entrega disponíveis.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA WHATSAPP -->
+  <section id="contato">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-title">Quer testar o PreçoVs com a sua lista?</div>
+        <div class="cta-text">
+          Envie sua lista agora pelo WhatsApp e receba uma simulação de comparação.
+          Sem compromisso de compra até você aprovar o valor final.
+        </div>
+        <div class="cta-actions">
+          <a class="btn-cta-whats" href="https://wa.me/5599999999999?text=Quero+simular+minha+lista+no+Pre%C3%A7oVs" target="_blank" rel="noopener noreferrer">
+            Chamar no WhatsApp
+          </a>
+          <button class="btn-cta-sec" type="button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            Voltar ao topo
+          </button>
+        </div>
+        <p style="font-size:0.75rem;color:#9ca3af;margin-top:4px;">
+          Horário de atendimento: 08h às 20h (horário local).
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-title">Sobre o PreçoVs</div>
+      <p class="legal">
+        <strong>PreçoVs</strong> é um serviço independente de comparação e intermediação de compras.
+        Não somos supermercado, não temos estoque próprio e não realizamos entrega por conta própria.
+        Os produtos são sempre vendidos e entregues pelos mercados ou plataformas escolhidos pelo cliente.
+      </p>
+      <p class="legal">
+        As marcas, nomes de mercados e termos eventualmente citados são de propriedade de seus respectivos donos.
+        Não possuímos vínculo comercial, parceria ou representação oficial com nenhum supermercado ou grupo citado.
+      </p>
+      <p class="legal-warning">
+        Os valores exibidos podem incluir taxa de intermediação do serviço PreçoVs. Preços e disponibilidade podem mudar sem aviso prévio.
+      </p>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="ano-atual"></span> PreçoVs. Todos os direitos reservados.</span>
+      <div class="footer-links">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#vantagens">Vantagens</a>
+        <a href="#exemplo">Exemplo</a>
+        <a href="#contato">Contato</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById('ano-atual').textContent = new Date().getFullYear();
+  </script>
+</footer>
+
 </body>
 </html>
