@@ -95,13 +95,15 @@
   font-weight: bold;
 }
 
+
 /* ===========================
-      CARROSSEL
+      CARROSSEL (BANNER 1920×600 SEM CORTE)
 =========================== */
 .carousel {
   position: relative;
   width: 100%;
   overflow: hidden;
+  background: #000; /* evita fundo branco caso a imagem não ocupe tudo */
 }
 
 .carousel-track {
@@ -110,9 +112,12 @@
   transition: transform 0.5s ease;
 }
 
+/* Mostra o banner INTEIRO, sem cortes, respeitando 1920×600 */
 .carousel img {
   width: 100%;
-  flex-shrink: 0;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 /* Botões */
@@ -129,17 +134,13 @@
   border-radius: 6px;
 }
 
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
 .carousel-btn:hover {
   background: rgba(0,0,0,0.6);
 }
 
-.carousel-btn.prev {
-  left: 10px;
-}
-
-.carousel-btn.next {
-  right: 10px;
-}
 
 /* ===========================
       FOOTER
@@ -234,7 +235,7 @@
 
 
 <!-- ===========================
-      CARROSSEL
+      CARROSSEL 100% DO BANNER
 =========================== -->
 <section class="carousel">
 
