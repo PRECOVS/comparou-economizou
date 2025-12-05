@@ -1,32 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PreçoVs</title>
+
+<style>
+
+/* ===========================
+      HEADER
+=========================== */
+.top-header {
+  background: #2563eb;
+  padding: 12px;
+  color: white;
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.logo span {
+  color: #22c55e;
+}
+
+/* SEARCH */
+.search-box {
+  flex: 1;
+  display: flex;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px 0 0 6px;
+}
+
+.search-box button {
+  padding: 10px 16px;
+  border: none;
+  background: #1e40af;
+  color: white;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
+
+/* ENDEREÇO */
+.endereco {
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.1rem;
+}
+
+.end-label {
+  opacity: 0.7;
+}
+
+/* ICONS AREA */
+.account, .cart {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  filter: invert(100%);
+}
+
+.cart {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  background: #ef4444;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+/* ===========================
+      CARROSSEL
+=========================== */
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  width: 300%;
+  transition: transform 0.5s ease;
+}
+
+.carousel img {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Botões */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.carousel-btn:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+/* ===========================
+      FOOTER
+=========================== */
+.footer {
+  background: #0f172a;
+  color: #d1d5db;
+  margin-top: 40px;
+  padding: 40px 16px;
+}
+
+.footer-grid {
+  max-width: 1400px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 32px;
+}
+
+.footer-col h3 {
+  margin-bottom: 12px;
+  color: white;
+}
+
+.footer-col p,
+.footer-col a {
+  font-size: 0.9rem;
+  line-height: 1.4rem;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-col li {
+  margin: 6px 0;
+}
+
+.footer-col a {
+  color: #d1d5db;
+  text-decoration: none;
+}
+
+.footer-col a:hover {
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid #1e293b;
+  color: #9ca3af;
+}
+
+</style>
+</head>
+<body>
+
 <!-- ===========================
-      CABEÇALHO PROFISSIONAL
+      CABEÇALHO
 =========================== -->
 <header class="top-header">
-
   <div class="header-container">
 
-    <!-- LOGO -->
     <div class="logo">Preço<span>Vs</span></div>
 
-    <!-- BARRA DE PESQUISA -->
     <div class="search-box">
       <input type="text" placeholder="Pesquisar produtos...">
       <button>Buscar</button>
     </div>
 
-    <!-- ENDEREÇO DO CLIENTE -->
     <div class="endereco">
       <span class="end-label">Entrega em:</span>
       <span id="enderecoCliente">Selecionar endereço</span>
     </div>
 
-    <!-- MINHA CONTA -->
     <div class="account">
       <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon">
       <span>Minha Conta</span>
     </div>
 
-    <!-- CARRINHO -->
     <div class="cart">
       <img src="https://cdn-icons-png.flaticon.com/512/3144/3144456.png" class="icon">
       <span>Carrinho</span>
@@ -34,20 +230,29 @@
     </div>
 
   </div>
-
 </header>
 
+
 <!-- ===========================
-      BANNER PRINCIPAL
+      CARROSSEL
 =========================== -->
-<section class="top-banner">
-  <img src="https://via.placeholder.com/1600x350?text=Banner+Principal+do+PreçoVs" alt="Banner PreçoVs">
+<section class="carousel">
+
+  <div class="carousel-track">
+    <img src="banner1.png" alt="Banner 1">
+    <img src="banner2.png" alt="Banner 2">
+    <img src="banner3.png" alt="Banner 3">
+  </div>
+
+  <button class="carousel-btn prev">‹</button>
+  <button class="carousel-btn next">›</button>
+
 </section>
 
 
 
 <!-- ===========================
-      RODAPÉ PROFISSIONAL
+      RODAPÉ
 =========================== -->
 <footer class="footer">
 
@@ -93,166 +298,36 @@
 </footer>
 
 
-
-
 <!-- ===========================
-           ESTILOS (CSS)
-=========================== -->
-<style>
-
-  /* HEADER */
-  .top-header {
-    background: #2563eb;
-    padding: 12px;
-    color: white;
-  }
-
-  .header-container {
-    max-width: 1400px;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-  }
-
-  .logo span {
-    color: #22c55e;
-  }
-
-  /* SEARCH */
-  .search-box {
-    flex: 1;
-    display: flex;
-  }
-
-  .search-box input {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 6px 0 0 6px;
-  }
-
-  .search-box button {
-    padding: 10px 16px;
-    border: none;
-    background: #1e40af;
-    color: white;
-    border-radius: 0 6px 6px 0;
-    cursor: pointer;
-  }
-
-  /* ENDEREÇO */
-  .endereco {
-    text-align: left;
-    font-size: 0.85rem;
-    line-height: 1.1rem;
-  }
-
-  .end-label {
-    opacity: 0.7;
-  }
-
-  /* ICONS AREA */
-  .account, .cart {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-  }
-
-  .icon {
-    width: 22px;
-    height: 22px;
-    filter: invert(100%);
-  }
-
-  .cart {
-    position: relative;
-  }
-
-  .cart-count {
-    position: absolute;
-    top: -5px;
-    right: -6px;
-    background: #ef4444;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-    border-radius: 999px;
-    font-weight: bold;
-  }
-
-  /* BANNER */
-  .top-banner img {
-    width: 100%;
-    display: block;
-  }
-
-  /* FOOTER */
-  .footer {
-    background: #0f172a;
-    color: #d1d5db;
-    margin-top: 40px;
-    padding: 40px 16px;
-  }
-
-  .footer-grid {
-    max-width: 1400px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 32px;
-  }
-
-  .footer-col h3 {
-    margin-bottom: 12px;
-    color: white;
-  }
-
-  .footer-col p,
-  .footer-col a {
-    font-size: 0.9rem;
-    line-height: 1.4rem;
-  }
-
-  .footer-col ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .footer-col li {
-    margin: 6px 0;
-  }
-
-  .footer-col a {
-    color: #d1d5db;
-    text-decoration: none;
-  }
-
-  .footer-col a:hover {
-    text-decoration: underline;
-  }
-
-  .footer-bottom {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 16px;
-    border-top: 1px solid #1e293b;
-    color: #9ca3af;
-  }
-
-</style>
-
-
-
-
-<!-- ===========================
-        SCRIPT DO ANO
+      SCRIPTS
 =========================== -->
 <script>
-  document.getElementById("ano").textContent = new Date().getFullYear();
+document.getElementById("ano").textContent = new Date().getFullYear();
+
+let index = 0;
+const track = document.querySelector('.carousel-track');
+const total = 3;
+
+function updateCarousel() {
+  track.style.transform = `translateX(-${index * 100}%)`;
+}
+
+document.querySelector('.next').onclick = () => {
+  index = (index + 1) % total;
+  updateCarousel();
+};
+
+document.querySelector('.prev').onclick = () => {
+  index = (index - 1 + total) % total;
+  updateCarousel();
+};
+
+// Auto-slide
+setInterval(() => {
+  index = (index + 1) % total;
+  updateCarousel();
+}, 4000);
 </script>
+
+</body>
+</html>
