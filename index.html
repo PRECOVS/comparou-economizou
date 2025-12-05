@@ -1,166 +1,105 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>PreçoVs – Simulador Inteligente</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background: #f3f4f6;
+  <meta charset="UTF-8"/>
+  <title>PreçoVs – Comparador de Preços</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body { margin:0; padding:0; font-family: 'Segoe UI', Tahoma, sans-serif; background: #f9fafb; color: #1f2937; }
+    header { background: #2563eb; color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    header .logo { font-size: 1.5rem; font-weight: bold; }
+    header nav a { color: white; margin-left: 16px; text-decoration: none; font-size: 0.95rem; }
+    main { display: flex; flex-wrap: wrap; padding: 24px; gap: 24px; }
+    .produtos { flex: 1 1 650px; display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 24px; }
+    .produto { background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .produto h3 { margin:0 0 8px; font-size: 1.1rem; }
+    .precos { font-size: 0.9rem; color: #4b5563; }
+    .precos p { margin: 4px 0; }
+    .produto button { margin-top: 12px; width: 100%; padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .produto button:hover { background: #1e40af; }
+    .sidebar { flex: 1 1 300px; background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 24px; height: fit-content; }
+    .sidebar h2 { margin: 0 0 12px; font-size: 1.3rem; }
+    .totais { width: 100%; border-collapse: collapse; }
+    .totais td { padding: 6px 0; font-size: 0.95rem; }
+    .ganhador { margin-top: 12px; font-size: 1.1rem; font-weight: bold; color: #15803d; }
+    @media (max-width: 860px) {
+      main { flex-direction: column; }
+      .sidebar { position: relative; top: auto; width: 100%; }
     }
-
-    header {
-        background: #0f172a;
-        padding: 16px;
-        color: white;
-        text-align: center;
-        font-size: 22px;
-        font-weight: bold;
-    }
-
-    .container {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 16px;
-        gap: 20px;
-    }
-
-    .produto {
-        background: white;
-        padding: 12px;
-        border-radius: 8px;
-        width: 250px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-
-    .produto button {
-        width: 100%;
-        background: #2563eb;
-        color: white;
-        border: none;
-        padding: 8px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 8px;
-    }
-
-    .produto button:hover {
-        background: #1e40af;
-    }
-
-    .carrinho {
-        background: white;
-        padding: 16px;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        margin: auto;
-    }
-
-    .ganhador {
-        margin-top: 8px;
-        font-size: 20px;
-        font-weight: bold;
-        color: #16a34a;
-        text-align: center;
-    }
-
-    table {
-        width: 100%;
-        margin-top: 10px;
-        border-collapse: collapse;
-    }
-
-    td, th {
-        border-bottom: 1px solid #ddd;
-        padding: 6px;
-        text-align: left;
-    }
-
-</style>
+  </style>
 </head>
 <body>
 
-<header>PreçoVs – Comparador Inteligente</header>
+<header>
+  <div class="logo">PreçoVs</div>
+  <nav>
+    <a href="#">Início</a>
+    <a href="#">Produtos</a>
+  </nav>
+</header>
 
-<div class="container" id="produtos"></div>
+<main>
+  <div class="produtos" id="produtos"></div>
 
-<div class="carrinho">
+  <aside class="sidebar">
     <h2>Carrinho</h2>
-    <table>
-        <tr><td>Total Mercado A:</td><td id="totalA">R$ 0,00</td></tr>
-        <tr><td>Total Mercado B:</td><td id="totalB">R$ 0,00</td></tr>
-        <tr><td>Total Mercado C:</td><td id="totalC">R$ 0,00</td></tr>
+    <table class="totais">
+      <tr><td>Mercado A:</td><td id="totalA">R$ 0,00</td></tr>
+      <tr><td>Mercado B:</td><td id="totalB">R$ 0,00</td></tr>
+      <tr><td>Mercado C:</td><td id="totalC">R$ 0,00</td></tr>
     </table>
-
-    <div class="ganhador" id="ganhador">Nenhum mercado ainda</div>
-</div>
+    <div class="ganhador" id="ganhador">Nenhum</div>
+  </aside>
+</main>
 
 <script>
-// PRODUTOS DEMONSTRATIVOS (você pode expandir isso)
-const produtos = [
+  const produtos = [
     { nome: "Detergente 500ml", A: 2.39, B: 2.59, C: 2.79 },
     { nome: "Sabão em Pó 1kg", A: 9.49, B: 10.49, C: 9.90 },
     { nome: "Arroz 5kg",       A: 28.90, B: 27.99, C: 29.50 },
     { nome: "Feijão 1kg",      A: 6.99, B: 7.49, C: 7.10 },
     { nome: "Leite 1L",        A: 4.89, B: 4.59, C: 4.99 }
-];
+  ];
+  let totalA=0, totalB=0, totalC=0;
 
-let totalA = 0;
-let totalB = 0;
-let totalC = 0;
-
-// Lista produtos na tela
-function carregarProdutos() {
-    const area = document.getElementById("produtos");
-
-    produtos.forEach((p, index) => {
-        const div = document.createElement("div");
-        div.className = "produto";
-        div.innerHTML = `
-            <h3>${p.nome}</h3>
-            <p>Mercado A: R$ ${p.A.toFixed(2)}</p>
-            <p>Mercado B: R$ ${p.B.toFixed(2)}</p>
-            <p>Mercado C: R$ ${p.C.toFixed(2)}</p>
-            <button onclick="add(${index})">Adicionar</button>
-        `;
-        area.appendChild(div);
+  function renderProdutos(){
+    const cont = document.getElementById("produtos");
+    produtos.forEach((p, i)=>{
+      const div = document.createElement("div");
+      div.className = "produto";
+      div.innerHTML = `
+        <h3>${p.nome}</h3>
+        <div class="precos">
+          <p>A: R$ ${p.A.toFixed(2)}</p>
+          <p>B: R$ ${p.B.toFixed(2)}</p>
+          <p>C: R$ ${p.C.toFixed(2)}</p>
+        </div>
+        <button onclick="add(${i})">Adicionar</button>
+      `;
+      cont.append(div);
     });
-}
+  }
 
-carregarProdutos();
-
-// Adiciona ao carrinho
-function add(i) {
+  function add(i){
     totalA += produtos[i].A;
     totalB += produtos[i].B;
     totalC += produtos[i].C;
+    atualizar();
+  }
 
-    atualizarCarrinho();
-}
-
-// Atualiza totais e ganhador
-function atualizarCarrinho() {
-
+  function atualizar(){
     document.getElementById("totalA").textContent = "R$ " + totalA.toFixed(2);
     document.getElementById("totalB").textContent = "R$ " + totalB.toFixed(2);
     document.getElementById("totalC").textContent = "R$ " + totalC.toFixed(2);
-
     const min = Math.min(totalA, totalB, totalC);
+    let v = "—";
+    if(min === totalA) v = "Mercado A";
+    if(min === totalB) v = "Mercado B";
+    if(min === totalC) v = "Mercado C";
+    document.getElementById("ganhador").textContent = v + " está ganhando";
+  }
 
-    let vencedor = "Nenhum mercado";
-
-    if (min === totalA) vencedor = "Mercado A está ganhando!";
-    if (min === totalB) vencedor = "Mercado B está ganhando!";
-    if (min === totalC) vencedor = "Mercado C está ganhando!";
-
-    document.getElementById("ganhador").textContent = vencedor;
-}
-
+  renderProdutos();
 </script>
 
 </body>
