@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PreçoVs</title>
-
-<style>
-
 /* ===========================
       HEADER
 =========================== */
 .top-header {
-  background: #2563eb;
+  background: #111; /* preto grafite */
   padding: 12px;
   color: white;
 }
@@ -27,10 +18,11 @@
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
+  color: #fff;
 }
 
 .logo span {
-  color: #22c55e;
+  color: #9b9b9b; /* cinza prata */
 }
 
 /* SEARCH */
@@ -42,17 +34,23 @@
 .search-box input {
   flex: 1;
   padding: 10px;
-  border: none;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: white;
   border-radius: 6px 0 0 6px;
 }
 
 .search-box button {
   padding: 10px 16px;
   border: none;
-  background: #1e40af;
+  background: #333;
   color: white;
   border-radius: 0 6px 6px 0;
   cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #444;
 }
 
 /* ENDEREÇO */
@@ -60,10 +58,11 @@
   text-align: left;
   font-size: 0.85rem;
   line-height: 1.1rem;
+  color: #e5e5e5;
 }
 
 .end-label {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* ICONS AREA */
@@ -72,6 +71,7 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  color: #e5e5e5;
 }
 
 .icon {
@@ -103,7 +103,7 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: #000; /* evita fundo branco */
+  background: #000;
 }
 
 .carousel-track {
@@ -112,9 +112,9 @@
 }
 
 .carousel img {
-  width: 100%;        /* mostra toda a largura */
-  height: auto;       /* altura reduz sem distorcer */
-  object-fit: contain; /* nunca corta a imagem */
+  width: 100%;
+  height: auto;
+  object-fit: contain;
   display: block;
 }
 
@@ -123,7 +123,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.5);
   border: none;
   color: white;
   font-size: 2rem;
@@ -136,7 +136,7 @@
 .carousel-btn.next { right: 10px; }
 
 .carousel-btn:hover {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
 }
 
 
@@ -144,7 +144,7 @@
       FOOTER
 =========================== */
 .footer {
-  background: #0f172a;
+  background: #0a0a0a;
   color: #d1d5db;
   margin-top: 40px;
   padding: 40px 16px;
@@ -179,7 +179,7 @@
 }
 
 .footer-col a {
-  color: #d1d5db;
+  color: #cfcfcf;
   text-decoration: none;
 }
 
@@ -191,143 +191,6 @@
   text-align: center;
   margin-top: 30px;
   padding-top: 16px;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid #333;
   color: #9ca3af;
 }
-
-</style>
-</head>
-<body>
-
-<!-- ===========================
-      CABEÇALHO
-=========================== -->
-<header class="top-header">
-  <div class="header-container">
-
-    <div class="logo">Preço<span>Vs</span></div>
-
-    <div class="search-box">
-      <input type="text" placeholder="Pesquisar produtos...">
-      <button>Buscar</button>
-    </div>
-
-    <div class="endereco">
-      <span class="end-label">Entrega em:</span>
-      <span id="enderecoCliente">Selecionar endereço</span>
-    </div>
-
-    <div class="account">
-      <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon">
-      <span>Minha Conta</span>
-    </div>
-
-    <div class="cart">
-      <img src="https://cdn-icons-png.flaticon.com/512/3144/3144456.png" class="icon">
-      <span>Carrinho</span>
-      <div class="cart-count" id="cartCount">0</div>
-    </div>
-
-  </div>
-</header>
-
-
-<!-- ===========================
-      CARROSSEL
-=========================== -->
-<section class="carousel">
-
-  <div class="carousel-track">
-    <img src="banner1.png" alt="Banner 1">
-    <img src="banner2.png" alt="Banner 2">
-    <img src="banner3.png" alt="Banner 3">
-  </div>
-
-  <button class="carousel-btn prev">‹</button>
-  <button class="carousel-btn next">›</button>
-
-</section>
-
-
-
-<!-- ===========================
-      RODAPÉ
-=========================== -->
-<footer class="footer">
-
-  <div class="footer-grid">
-
-    <div class="footer-col">
-      <h3>PreçoVs</h3>
-      <p>Comparador inteligente de compras. Não somos supermercado. Não vendemos produtos. Intermediamos a comparação e ajudamos você a economizar tempo e dinheiro.</p>
-    </div>
-
-    <div class="footer-col">
-      <h3>Institucional</h3>
-      <ul>
-        <li><a href="#">Como funciona</a></li>
-        <li><a href="#">Política de Privacidade</a></li>
-        <li><a href="#">Termos de Uso</a></li>
-        <li><a href="#">Fale Conosco</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h3>Ajuda</h3>
-      <ul>
-        <li><a href="#">Central de atendimento</a></li>
-        <li><a href="#">Meus pedidos</a></li>
-        <li><a href="#">Problemas com entrega</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h3>Contato</h3>
-      <p>Atendimento: 08h às 20h</p>
-      <p>Email: suporte@precovs.com</p>
-      <p>WhatsApp: (00) 90000-0000</p>
-    </div>
-
-  </div>
-
-  <div class="footer-bottom">
-    <p>© <span id="ano"></span> PreçoVs — Todos os direitos reservados.</p>
-  </div>
-
-</footer>
-
-
-<!-- ===========================
-      SCRIPTS
-=========================== -->
-<script>
-document.getElementById("ano").textContent = new Date().getFullYear();
-
-let index = 0;
-const track = document.querySelector('.carousel-track');
-const slides = document.querySelectorAll('.carousel img');
-const total = slides.length;
-
-function updateCarousel() {
-  track.style.transform = `translateX(-${index * 100}%)`;
-}
-
-document.querySelector('.next').onclick = () => {
-  index = (index + 1) % total;
-  updateCarousel();
-};
-
-document.querySelector('.prev').onclick = () => {
-  index = (index - 1 + total) % total;
-  updateCarousel();
-};
-
-// Auto-slide a cada 5 segundos
-setInterval(() => {
-  index = (index + 1) % total;
-  updateCarousel();
-}, 5000);
-</script>
-
-</body>
-</html>
