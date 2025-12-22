@@ -361,6 +361,39 @@ body {
 }
 
 /* ===========================
+      SETORES (12 BLOCOS)
+=========================== */
+.sectors-box {
+  margin-top: 18px;
+  background: rgba(15,23,42,0.55);
+  border: 1px solid #1f2937;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.sectors-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sector-card {
+  background: var(--bg-card-soft);
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  padding: 16px 10px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  user-select: none;
+}
+
+.sector-card:hover {
+  background: #0b1220;
+  border-color: rgba(34,197,94,0.45);
+}
+
+/* ===========================
       COMO FUNCIONA (3 PASSOS)
 =========================== */
 .steps-grid {
@@ -473,7 +506,7 @@ body {
 }
 
 /* ===========================
-      MERCADOS / LISTAGEM
+      LISTAGEM (EXEMPLO)
 =========================== */
 .partners-strip {
   background: rgba(15,23,42,0.9);
@@ -662,6 +695,10 @@ body {
   .hero { grid-template-columns: minmax(0,1fr); }
   .footer-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   .info-bar-inner { flex-direction: column; align-items: flex-start; }
+  .sectors-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 </style>
 </head>
@@ -765,6 +802,24 @@ body {
       <div class="hero-legend">
         Você adiciona detergente, leite, arroz... nós atualizamos qual mercado está na frente e quanto você está economizando.
       </div>
+    </div>
+  </div>
+
+  <!-- RETÂNGULO COM 12 BLOCOS (SETORES) -->
+  <div class="sectors-box">
+    <div class="sectors-grid">
+      <div class="sector-card">Mercearia Salgada</div>
+      <div class="sector-card">Mercearia Doce</div>
+      <div class="sector-card">Saudáveis</div>
+      <div class="sector-card">Bebidas</div>
+      <div class="sector-card">Perfumaria</div>
+      <div class="sector-card">Bazar</div>
+      <div class="sector-card">Limpeza</div>
+      <div class="sector-card">Frios</div>
+      <div class="sector-card">Açougue</div>
+      <div class="sector-card">Padaria</div>
+      <div class="sector-card">Hortifruti</div>
+      <div class="sector-card">Congelados</div>
     </div>
   </div>
 </section>
