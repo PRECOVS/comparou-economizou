@@ -362,6 +362,8 @@ body {
 
 /* ===========================
       SETORES (12 BLOCOS) — 3 x 4
+      AJUSTE: cards quadrados (1:1) p/ imagens 1000x1000
+      e retângulo alinhado mais à esquerda (não ocupa a largura toda)
       - tenta usar setor1.png ... setor12.png
       - se não existir imagem, fica preto
 =========================== */
@@ -371,6 +373,11 @@ body {
   border: 1px solid #1f2937;
   border-radius: 18px;
   padding: 16px;
+
+  /* deixa mais pra esquerda e não ocupa a parede toda */
+  max-width: 760px;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .sectors-grid {
@@ -393,22 +400,23 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 
-  /* layout */
-  min-height: 96px;
+  /* quadrado exato */
+  aspect-ratio: 1 / 1;
+
+  /* texto no rodapé */
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding: 14px 10px;
 
   user-select: none;
-  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
 .sector-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  /* overlay para o texto ficar legível mesmo com foto */
   background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.18));
 }
 
@@ -742,9 +750,10 @@ body {
   .hero { grid-template-columns: minmax(0,1fr); }
   .footer-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   .info-bar-inner { flex-direction: column; align-items: flex-start; }
+  .sectors-box { max-width: 100%; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 520px) {
   .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 </style>
@@ -852,7 +861,7 @@ body {
     </div>
   </div>
 
-  <!-- RETÂNGULO COM 12 BLOCOS (3 x 4) -->
+  <!-- RETÂNGULO COM 12 BLOCOS (3 x 4) — QUADRADOS / ALINHADO À ESQUERDA -->
   <div class="sectors-box">
     <div class="sectors-grid">
       <div class="sector-card"><span>Mercearia Salgada</span></div>
