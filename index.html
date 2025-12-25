@@ -303,7 +303,7 @@ body {
 @media (max-width: 520px)  { .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ===========================
-      CATÁLOGO — MODO "SÓ PRODUTOS"
+      CATÁLOGO — SÓ PRODUTOS VISÍVEL
 =========================== */
 .catalog-shell{
   margin-top: 16px;
@@ -313,7 +313,7 @@ body {
   padding: 14px;
 }
 
-/* ESSE BLOCO FICA ESCONDIDO POR PADRÃO (CTRL+SHIFT+L ou #admin) */
+/* CONTROLES OCULTOS (CTRL+SHIFT+L ou #admin) */
 .catalog-controls{
   display:none;
   margin-bottom: 12px;
@@ -344,9 +344,7 @@ body {
 }
 .catalog-btn:disabled{ opacity:.5; cursor:not-allowed; }
 
-.catalog-status, .catalog-debug{
-  display:none; /* some com tudo */
-}
+.catalog-status, .catalog-debug{ display:none; }
 
 .catalog-grid{
   display:grid;
@@ -400,9 +398,7 @@ body {
   background: rgba(2,6,23,0.85);
   border-radius: 14px;
 }
-.catalog-pager .info{
-  display:none; /* some a info */
-}
+.catalog-pager .info{ display:none; }
 
 @media (max-width: 1200px){ .catalog-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
 @media (max-width: 900px){ .catalog-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
@@ -540,7 +536,7 @@ body {
     <div class="catalog-controls" id="catalogControls">
       <div class="row">
         <div>
-          <label>AUTO (GitHub Pages) — ./PRODUTOS/index.json</label><br>
+          <label>AUTO — ./PRODUTOS/index.json</label><br>
           <button class="catalog-btn" id="btnAuto" type="button">AUTO carregar</button>
         </div>
 
@@ -573,7 +569,7 @@ body {
 
 <script>
 /* ===========================
-   FIXOS / UI
+   CARROSSEL + SCROLL
 =========================== */
 let index = 0;
 const track = document.querySelector('.carousel-track');
@@ -589,7 +585,6 @@ document.getElementById('goCatalog').addEventListener('click', () => {
   document.getElementById('catalogoProdutos').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 document.getElementById('goHow').addEventListener('click', () => {
-  // mantém funcionalidade mesmo sem seção
   window.scrollTo({ top: document.body.scrollHeight * 0.4, behavior: 'smooth' });
 });
 
@@ -970,9 +965,7 @@ async function parseXlsxCatalog(fileLike){
       out.push({ nome, preco, imagem });
     }
 
-    if (out.length){
-      return { items: out };
-    }
+    if (out.length) return { items: out };
   }
   return { items: [] };
 }
@@ -987,31 +980,9 @@ function dedupeProducts(arr){
   });
 }
 
-async function loadFromFiles(fileLikes){
-  let merged = [];
-  for (const f of fileLikes){
-    try{
-      const res = await parseXlsxCatalog(f);
-      if (res.items.length) merged.push(...res.items);
-    }catch(e){
-      console.warn('XLSX erro:', f.name, e);
-    }
-  }
-
-  merged = dedupeProducts(merged);
-  itemsAll = merged;
-  applySearch();
-}
-
-btnLoad.addEventListener('click', async () => {
-  const files = gatherFiles();
-  await loadFromFiles(files);
-});
-
-globalSearch.addEventListener('input', applySearch);
-globalSearchBtn.addEventListener('click', applySearch);
-
-// AUTO via index.json (silencioso)
+/* ===========================
+   AUTO (index.json)
+=========================== */
 async function fetchJsonSafe(url){
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1024,33 +995,155 @@ function normalizeIndexJson(j){
   return [];
 }
 
-async function autoLoadSilent(){
-  const t = Date.now();
-  try{
-    const idx = await fetchJsonSafe(`./PRODUTOS/index.json?v=${t}`);
-    const names = normalizeIndexJson(idx).filter(n => typeof n === 'string' && extOk(n));
-    const virtualFiles = [];
+/* ===========================
+   SPEED: pool + cache + render progressivo
+=========================== */
+const FETCH_CONCURRENCY = 6;   // downloads simultâneos
+const PARSE_CONCURRENCY = 2;   // parses simultâneos (CPU)
+const RENDER_THROTTLE_MS = 180;
 
-    for (const name of names){
-      const safeName = name.replace(/^\/+/,'');
-      const url = `./PRODUTOS/${encodePath(safeName)}?v=${t}`;
-      try{
-        const r = await fetch(url, { cache: 'no-store' });
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const ab = await r.arrayBuffer();
-        virtualFiles.push({ name: safeName, arrayBuffer: async () => ab });
-      }catch(e){
-        console.warn('AUTO fetch falhou:', safeName, e);
-      }
+async function pool(limit, list, worker){
+  const ret = new Array(list.length);
+  let i = 0;
+  const runners = new Array(Math.min(limit, list.length)).fill(0).map(async () => {
+    while (true){
+      const idx = i++;
+      if (idx >= list.length) break;
+      ret[idx] = await worker(list[idx], idx);
     }
+  });
+  await Promise.all(runners);
+  return ret;
+}
 
-    if (virtualFiles.length) await loadFromFiles(virtualFiles);
-  }catch(e){
-    console.warn('AUTO index.json falhou:', e);
+async function sha256Base64(str){
+  try{
+    const data = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    const bytes = new Uint8Array(hash);
+    let bin = '';
+    for (const b of bytes) bin += String.fromCharCode(b);
+    return btoa(bin).replaceAll('=','');
+  }catch{
+    return btoa(unescape(encodeURIComponent(str))).slice(0,80).replaceAll('=','');
   }
 }
 
-// CONTROLES: abrir com Ctrl+Shift+L ou URL com #admin
+async function cacheKeyFor(names){
+  const sig = await sha256Base64(JSON.stringify(names));
+  return `precovs_catalog_${sig}`;
+}
+
+function cacheRead(key){
+  try{
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) return null;
+    return data;
+  }catch{
+    return null;
+  }
+}
+
+function cacheWrite(key, arr){
+  try{
+    localStorage.setItem(key, JSON.stringify(arr));
+  }catch{
+    // ignora
+  }
+}
+
+let _lastRenderAt = 0;
+function renderThrottled(){
+  const now = performance.now();
+  if (now - _lastRenderAt < RENDER_THROTTLE_MS) return;
+  _lastRenderAt = now;
+  applySearch();
+}
+
+async function loadFromFilesProgressive(fileLikes){
+  itemsAll = [];
+  applySearch();
+
+  await pool(PARSE_CONCURRENCY, fileLikes, async (f) => {
+    try{
+      const res = await parseXlsxCatalog(f);
+      if (res.items && res.items.length){
+        itemsAll.push(...res.items);
+        itemsAll = dedupeProducts(itemsAll);
+        renderThrottled();
+      }
+    }catch(e){
+      console.warn('XLSX erro:', f.name, e);
+    }
+  });
+
+  itemsAll = dedupeProducts(itemsAll);
+  applySearch();
+}
+
+async function loadFromFiles(fileLikes){
+  await loadFromFilesProgressive(fileLikes);
+}
+
+async function autoLoadSilent(){
+  const t = Date.now();
+
+  let idx;
+  try{
+    idx = await fetchJsonSafe(`./PRODUTOS/index.json?v=${t}`);
+  }catch(e){
+    console.warn('AUTO index.json falhou:', e);
+    return;
+  }
+
+  const names = normalizeIndexJson(idx).filter(n => typeof n === 'string' && extOk(n));
+  if (!names.length) return;
+
+  const cKey = await cacheKeyFor(names);
+  const cached = cacheRead(cKey);
+  if (cached && cached.length){
+    itemsAll = cached;
+    applySearch();
+    return;
+  }
+
+  const virtualFiles = (await pool(FETCH_CONCURRENCY, names, async (name) => {
+    const safeName = name.replace(/^\/+/,'');
+    const url = `./PRODUTOS/${encodePath(safeName)}?v=${t}`;
+
+    try{
+      const r = await fetch(url, { cache: 'no-store' });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const ab = await r.arrayBuffer();
+      return { name: safeName, arrayBuffer: async () => ab };
+    }catch(e){
+      console.warn('AUTO fetch falhou:', safeName, e);
+      return null;
+    }
+  })).filter(Boolean);
+
+  if (!virtualFiles.length) return;
+
+  await loadFromFilesProgressive(virtualFiles);
+  if (itemsAll.length) cacheWrite(cKey, itemsAll);
+}
+
+/* ===========================
+   EVENTOS (manual)
+=========================== */
+btnLoad.addEventListener('click', async () => {
+  const files = gatherFiles();
+  await loadFromFiles(files);
+});
+
+globalSearch.addEventListener('input', applySearch);
+globalSearchBtn.addEventListener('click', applySearch);
+
+/* ===========================
+   CONTROLES: Ctrl+Shift+L ou #admin
+=========================== */
 const controls = document.getElementById('catalogControls');
 function setControlsVisible(v){ controls.classList.toggle('show', !!v); }
 
@@ -1066,7 +1159,9 @@ if (location.hash && location.hash.toLowerCase().includes('admin')){
 
 btnAuto.addEventListener('click', autoLoadSilent);
 
-// init
+/* ===========================
+   INIT (silencioso)
+=========================== */
 render();
 autoLoadSilent();
 </script>
