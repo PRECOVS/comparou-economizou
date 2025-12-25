@@ -361,9 +361,9 @@ body {
 }
 
 /* ===========================
-      SETORES (12 BLOCOS) — 3 x 4
-      AJUSTE: cards quadrados (1:1) p/ imagens 1000x1000
-      e retângulo alinhado mais à esquerda (não ocupa a largura toda)
+      SETORES — SEM SCROLL, CABE TUDO NA TELA
+      Desktop: 12 em 1 linha (1 altura)
+      Responsivo: reduz colunas pra não ficar ilegível (sem barra)
       - tenta usar setor1.png ... setor12.png
       - se não existir imagem, fica preto
 =========================== */
@@ -374,16 +374,17 @@ body {
   border-radius: 18px;
   padding: 16px;
 
-  /* deixa mais pra esquerda e não ocupa a parede toda */
-  max-width: 760px;
+  max-width: 100%;
   margin-left: 0;
   margin-right: auto;
 }
 
+/* 12 cards lado a lado, sem overflow */
 .sectors-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 colunas */
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 10px;
+  overflow: hidden; /* sem barra */
 }
 
 .sector-card {
@@ -392,22 +393,18 @@ body {
   border-radius: 14px;
   border: 1px solid #1f2937;
 
-  /* fallback preto caso não carregue imagem */
   background-color: #000;
-
-  /* se existir imagem, ela aparece */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  /* quadrado exato */
   aspect-ratio: 1 / 1;
 
-  /* texto no rodapé */
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 14px 10px;
+
+  padding: clamp(8px, 1vw, 14px) clamp(6px, 0.9vw, 10px);
 
   user-select: none;
   transition: transform 0.15s ease, border-color 0.15s ease;
@@ -423,10 +420,12 @@ body {
 .sector-card span {
   position: relative;
   z-index: 1;
-  font-size: 0.88rem;
+  font-size: clamp(0.55rem, 0.85vw, 0.88rem);
   font-weight: 650;
   color: var(--text-main);
   text-align: center;
+  line-height: 1.1;
+  padding: 0 4px;
 }
 
 .sector-card:hover {
@@ -447,6 +446,17 @@ body {
 .sectors-grid .sector-card:nth-child(10) { background-image: url("setor10.png"); }
 .sectors-grid .sector-card:nth-child(11) { background-image: url("setor11.png"); }
 .sectors-grid .sector-card:nth-child(12) { background-image: url("setor12.png"); }
+
+/* Responsivo SEM BARRA: reduz colunas */
+@media (max-width: 1200px) {
+  .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 820px) {
+  .sectors-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* ===========================
       COMO FUNCIONA (3 PASSOS)
@@ -744,17 +754,12 @@ body {
   font-size: 0.8rem;
 }
 
-/* RESPONSIVO */
+/* RESPONSIVO GERAL */
 @media (max-width: 900px) {
   .header-container { flex-wrap: wrap; }
   .hero { grid-template-columns: minmax(0,1fr); }
   .footer-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   .info-bar-inner { flex-direction: column; align-items: flex-start; }
-  .sectors-box { max-width: 100%; }
-}
-
-@media (max-width: 520px) {
-  .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 </style>
 </head>
@@ -861,7 +866,7 @@ body {
     </div>
   </div>
 
-  <!-- RETÂNGULO COM 12 BLOCOS (3 x 4) — QUADRADOS / ALINHADO À ESQUERDA -->
+  <!-- SETORES: SEM SCROLL / CABE NA TELA -->
   <div class="sectors-box">
     <div class="sectors-grid">
       <div class="sector-card"><span>Mercearia Salgada</span></div>
