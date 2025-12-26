@@ -26,7 +26,12 @@ body {
   background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
   color: var(--text-main);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+.page-main{ flex:1; display:flex; flex-direction:column; }
 
 /* Containers */
 .page-section { max-width: 1400px; margin: 0 auto; padding: 32px 16px; }
@@ -313,6 +318,72 @@ body {
   padding: 14px;
 }
 
+.catalog-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  margin-bottom:12px;
+  background: linear-gradient(120deg, rgba(34,197,94,0.08), rgba(2,6,23,0.85));
+  border:1px solid #16302a;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  flex-wrap:wrap;
+}
+.catalog-filter, .catalog-search{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:240px;
+  flex:1;
+}
+.catalog-filter label, .catalog-search label{
+  font-size:0.82rem;
+  color: var(--text-muted);
+  letter-spacing:0.02em;
+}
+.catalog-filter select{
+  padding:10px 12px;
+  background:#0a0f14;
+  color:var(--text-main);
+  border:1px solid #1f2937;
+  border-radius:12px;
+  font-weight:650;
+  outline:none;
+  box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12);
+}
+.catalog-filter select:focus{ border-color: rgba(34,197,94,0.6); box-shadow:0 0 0 1px rgba(34,197,94,0.35); }
+.catalog-search-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:#0a0f14;
+  border:1px solid #1f2937;
+  box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12);
+}
+.catalog-search-box input{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--text-main);
+  font-size:0.95rem;
+}
+.catalog-search-box input::placeholder{ color: var(--text-muted); }
+.catalog-search-clear{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid #1f2937;
+  background:rgba(34,197,94,0.12);
+  color:var(--accent-green);
+  cursor:pointer;
+  font-weight:700;
+}
+.catalog-search-clear:hover{ background:rgba(34,197,94,0.2); }
+
 /* CONTROLES OCULTOS (CTRL+SHIFT+L ou #admin) */
 .catalog-controls{
   display:none;
@@ -351,6 +422,15 @@ body {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
+.catalog-empty{
+  grid-column: 1 / -1;
+  text-align:center;
+  padding:30px 16px;
+  border:1px dashed #1f2937;
+  border-radius:14px;
+  color: var(--text-muted);
+  background: rgba(2,6,23,0.6);
+}
 .catalog-card{
   background: rgba(3,7,18,0.65);
   border: 1px solid #111827;
@@ -360,6 +440,330 @@ body {
   display:flex;
   flex-direction:column;
   gap: 10px;
+}
+.catalog-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color: var(--text-muted);
+  font-size:12px;
+}
+.catalog-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid #1f2937;
+  background: rgba(34,197,94,0.08);
+  color: var(--accent-green);
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:0.02em;
+}
+.catalog-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:auto;
+}
+.qty-control{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid #1f2937;
+  background:#0b0f17;
+  border-radius:10px;
+  overflow:hidden;
+}
+.qty-btn{
+  width:34px;
+  height:34px;
+  background:transparent;
+  color:var(--accent-green);
+  border:none;
+  cursor:pointer;
+  font-weight:900;
+  font-size:18px;
+}
+.qty-btn:hover{ background:rgba(34,197,94,0.12); }
+.qty-input{
+  width:50px;
+  background:transparent;
+  border:none;
+  text-align:center;
+  color:var(--text-main);
+  font-weight:700;
+  outline:none;
+}
+.catalog-add{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(34,197,94,0.4);
+  background: linear-gradient(120deg, rgba(34,197,94,0.15), rgba(34,197,94,0.32));
+  color:var(--accent-strong);
+  font-weight:800;
+  cursor:pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow:0 10px 25px rgba(34,197,94,0.15);
+}
+.catalog-add:hover{ transform: translateY(-1px); box-shadow:0 14px 30px rgba(34,197,94,0.25); }
+.catalog-add.added{
+  background: linear-gradient(120deg, rgba(34,197,94,0.35), rgba(34,197,94,0.55));
+  border-color: rgba(34,197,94,0.7);
+  animation: add-pop 0.5s ease;
+  filter: drop-shadow(0 0 12px rgba(34,197,94,0.35));
+}
+.cart-count.bump{ animation: cart-bounce 0.6s ease; }
+
+@keyframes add-pop{
+  0%{ transform: scale(1); }
+  40%{ transform: scale(1.08) translateY(-2px); }
+  70%{ transform: scale(0.98); }
+  100%{ transform: scale(1); }
+}
+@keyframes cart-bounce{
+  0%{ transform: scale(1); }
+  30%{ transform: scale(1.15) translateY(-2px); }
+  60%{ transform: scale(0.9); }
+  100%{ transform: scale(1); }
+}
+
+/* FOOTER */
+.site-footer{
+  margin-top:50px;
+  background: radial-gradient(circle at 20% 20%, rgba(34,197,94,0.1), transparent 25%), #050608;
+  border-top:1px solid #111827;
+  padding:36px 16px 28px;
+  color:var(--text-main);
+}
+.footer-inner{
+  max-width:1400px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap:20px;
+}
+.footer-col h4{
+  font-size:1.05rem;
+  margin-bottom:10px;
+  font-weight:800;
+}
+.footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:6px; }
+.footer-col a{
+  color:var(--text-muted);
+  text-decoration:none;
+  font-size:0.95rem;
+}
+.footer-col a:hover{ color:var(--accent-green); }
+.footer-trust-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  color:var(--text-muted);
+  font-size:0.94rem;
+}
+.footer-trust-list li::before{
+  content:"✓";
+  color:var(--accent-green);
+  margin-right:6px;
+  font-weight:800;
+}
+.footer-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  background: rgba(34,197,94,0.12);
+  border:1px solid rgba(34,197,94,0.3);
+  border-radius:12px;
+  font-weight:750;
+  color:var(--accent-green);
+  margin-top:8px;
+  box-shadow:0 10px 24px rgba(34,197,94,0.12);
+}
+.footer-bottom{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid #111827;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.footer-back-btn{
+  background:linear-gradient(120deg, rgba(34,197,94,0.3), rgba(34,197,94,0.6));
+  color:#020617;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:850;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(34,197,94,0.2);
+}
+.footer-back-btn:hover{ box-shadow:0 14px 30px rgba(34,197,94,0.3); transform:translateY(-1px); }
+
+/* CART PANEL */
+.cart-panel{
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  width: min(360px, 90vw);
+  max-height: 70vh;
+  background: rgba(9,12,20,0.96);
+  border:1px solid #1f2937;
+  border-radius:14px;
+  box-shadow:0 24px 70px rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+  display:none;
+  flex-direction:column;
+  z-index: 999;
+}
+.cart-panel.show{ display:flex; }
+.cart-panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
+  border-bottom:1px solid #111827;
+  font-weight:800;
+}
+.cart-panel-close{
+  background:#0b0f17;
+  color:var(--text-main);
+  border:1px solid #1f2937;
+  border-radius:10px;
+  padding:8px 12px;
+  cursor:pointer;
+}
+.cart-items{
+  padding:12px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.cart-empty{
+  color:var(--text-muted);
+  text-align:center;
+  padding:20px;
+  border:1px dashed #1f2937;
+  border-radius:10px;
+}
+.cart-item{
+  display:flex;
+  gap:10px;
+  border:1px solid #1f2937;
+  border-radius:12px;
+  padding:10px;
+  background: #0b0f17;
+}
+.cart-thumb{
+  width:64px;
+  height:64px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#0f172a;
+  border:1px solid #111827;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  color:var(--text-muted);
+}
+.cart-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.cart-info{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.cart-title{ font-weight:800; font-size:14px; }
+.cart-meta{
+  display:flex;
+  gap:8px;
+  font-size:12px;
+  color:var(--text-muted);
+}
+.cart-remove{
+  align-self:flex-start;
+  background:rgba(239,68,68,0.12);
+  color:#f87171;
+  border:1px solid rgba(239,68,68,0.35);
+  border-radius:10px;
+  padding:6px 10px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:12px;
+}
+
+/* CART FLOATER */
+.cart-floater{
+  position:fixed;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%) translateY(120%);
+  width:min(520px, 90vw);
+  background: linear-gradient(160deg, rgba(18,24,40,0.92), rgba(15,23,42,0.9));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  box-shadow:0 16px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(34,197,94,0.15);
+  backdrop-filter: blur(12px);
+  padding:14px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity:0;
+  z-index:998;
+}
+.cart-floater.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+.cart-floater-main{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.cart-floater-meta{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.cart-floater-label{ font-weight:850; font-size:1rem; letter-spacing:0.01em; }
+.cart-floater-values{ color:var(--text-muted); font-size:0.92rem; }
+.cart-floater-market{ color:var(--accent-green); font-weight:700; font-size:0.92rem; }
+.cart-floater-btn{
+  background:var(--accent-green);
+  color:#020617;
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+  min-width:120px;
+}
+.cart-floater-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-end;
+}
+.cart-floater-visit{
+  background:linear-gradient(120deg, rgba(34,197,94,0.25), rgba(34,197,94,0.5));
+  color:#020617;
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+  min-width:140px;
+  box-shadow:0 10px 30px rgba(34,197,94,0.18);
 }
 .catalog-thumb{
   width:100%;
@@ -399,9 +803,30 @@ body {
   border-radius: 14px;
 }
 .catalog-pager .info{ display:none; }
+.catalog-randomize{
+  text-align:center;
+  margin-top:10px;
+}
+.catalog-randomize button{
+  background:linear-gradient(120deg, rgba(34,197,94,0.25), rgba(34,197,94,0.45));
+  border:1px solid rgba(34,197,94,0.4);
+  color:var(--accent-strong);
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(34,197,94,0.15);
+}
+.catalog-randomize-top{
+  margin-top:0;
+  text-align:right;
+}
 
 @media (max-width: 1200px){ .catalog-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
 @media (max-width: 900px){ .catalog-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 720px){
+  .catalog-toolbar{ flex-direction:column; align-items:stretch; }
+}
 
 /* RESPONSIVO GERAL */
 @media (max-width: 900px) {
@@ -413,6 +838,8 @@ body {
 </head>
 
 <body>
+
+<div class="page-main">
 
 <header class="top-header">
   <div class="header-container">
@@ -446,6 +873,28 @@ body {
     <div class="info-pill">Intermediador</div>
     <div>
       Nós não vendemos produtos. <span class="info-highlight">Você escolhe o carrinho ideal</span> e finaliza a compra direto no site do supermercado escolhido.
+    </div>
+  </div>
+</div>
+
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-panel-header">
+    <span>Seu carrinho (<span id="cartCountLabel">0</span>)</span>
+    <button class="cart-panel-close" id="cartCloseBtn" type="button">Fechar</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+</div>
+
+<div class="cart-floater" id="cartFloater">
+  <div class="cart-floater-main">
+    <div class="cart-floater-meta">
+      <div class="cart-floater-label">Resumo rápido do carrinho</div>
+      <div class="cart-floater-values"><span id="floaterCount">0 itens</span> · <span id="floaterTotal">R$ 0,00</span></div>
+      <div class="cart-floater-market">Mercado mais barato (estimativa): <span id="floaterBest">-</span></div>
+    </div>
+    <div class="cart-floater-actions">
+      <button class="cart-floater-btn" id="floaterOpenCart" type="button">Ver carrinho</button>
+      <button class="cart-floater-visit" id="floaterVisitSite" type="button">Visitar o Site</button>
     </div>
   </div>
 </div>
@@ -557,6 +1006,25 @@ body {
     <div class="catalog-status" id="status"></div>
     <div class="catalog-debug" id="debug"></div>
 
+    <div class="catalog-toolbar">
+      <div class="catalog-filter">
+        <label for="sectorFilter">Filtrar por setor</label>
+        <select id="sectorFilter">
+          <option value="__all">Todos os setores</option>
+        </select>
+      </div>
+      <div class="catalog-search">
+        <label for="catalogSearch">Buscar no catálogo (ao vivo)</label>
+        <div class="catalog-search-box">
+          <input id="catalogSearch" type="text" placeholder="Digite o nome do produto...">
+          <button class="catalog-search-clear" id="catalogSearchClear" type="button">Limpar</button>
+        </div>
+      </div>
+      <div class="catalog-randomize catalog-randomize-top">
+        <button id="randomizeBtn" type="button">Aleatorizar produtos</button>
+      </div>
+    </div>
+
     <div class="catalog-grid" id="grid"></div>
 
     <div class="catalog-pager">
@@ -566,6 +1034,44 @@ body {
     </div>
   </div>
 </section>
+
+</div>
+
+<footer class="site-footer" id="rodape">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Sobre o PreçoVs</h4>
+      <p class="footer-pill">Intermediador · Melhor preço total</p>
+      <ul>
+        <li><a href="como-funciona.html">Como funciona</a></li>
+        <li><a href="catalogo.html">Catálogo</a></li>
+        <li><a href="faq.html">Perguntas frequentes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Segurança</h4>
+      <p class="footer-pill">🛡️ 100% Seguro</p>
+      <ul class="footer-trust-list">
+        <li>Pagamento direto no site que você escolher</li>
+        <li>Dados trafegam com proteção SSL</li>
+        <li>Sem vínculo comercial com mercados</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ajuda</h4>
+      <ul>
+        <li><a href="suporte.html">Suporte</a></li>
+        <li><a href="politica-entrega.html">Política de entrega</a></li>
+        <li><a href="politica-devolucao.html">Política de devolução</a></li>
+        <li><a href="privacidade.html">Privacidade</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 PreçoVs · Economia e comparação em um só lugar.</span>
+    <button class="footer-back-btn" id="footerBackBtn" type="button">Ir para o topo</button>
+  </div>
+</footer>
 
 <script>
 /* ===========================
@@ -592,6 +1098,7 @@ document.getElementById('goHow').addEventListener('click', () => {
    CATÁLOGO (XLSX + AUTO)
 =========================== */
 const PAGE_SIZE = 50;
+let itemsBase = [];
 let itemsAll = [];
 let items = [];
 let page = 1;
@@ -611,6 +1118,31 @@ const pageInfo = document.getElementById('pageInfo');
 
 const globalSearch = document.getElementById('globalSearch');
 const globalSearchBtn = document.getElementById('globalSearchBtn');
+const catalogSearch = document.getElementById('catalogSearch');
+const catalogSearchClear = document.getElementById('catalogSearchClear');
+const sectorFilter = document.getElementById('sectorFilter');
+const cartCountEl = document.getElementById('cartCount');
+const cartCountLabel = document.getElementById('cartCountLabel');
+const cartPanel = document.getElementById('cartPanel');
+const cartCloseBtn = document.getElementById('cartCloseBtn');
+const cartItemsEl = document.getElementById('cartItems');
+const cartFloater = document.getElementById('cartFloater');
+const floaterCount = document.getElementById('floaterCount');
+const floaterTotal = document.getElementById('floaterTotal');
+const floaterBest = document.getElementById('floaterBest');
+const floaterOpenCart = document.getElementById('floaterOpenCart');
+const floaterVisitSite = document.getElementById('floaterVisitSite');
+const SITE_URL = (location.origin && location.origin !== 'null') ? location.origin : 'https://';
+const randomizeBtn = document.getElementById('randomizeBtn');
+const footerBackBtn = document.getElementById('footerBackBtn');
+
+const DEFAULT_SECTORS = [
+  'Mercearia Salgada','Mercearia Doce','Saudáveis','Bebidas','Perfumaria','Bazar',
+  'Limpeza','Frios','Açougue','Padaria','Hortifruti','Congelados'
+];
+
+const cart = new Map();
+let sectorOptionsSignature = '';
 
 function setStatus(msg){ statusEl.textContent = msg; }
 function setDebug(html){ debugEl.innerHTML = html; }
@@ -641,9 +1173,76 @@ function resolveImgPath(raw){
   return './' + img.replace(/^\/+/,'');
 }
 
-function applySearch(){
-  const q = (globalSearch.value || '').trim().toLowerCase();
-  items = !q ? [...itemsAll] : itemsAll.filter(p => (p.nome || '').toLowerCase().includes(q));
+function hasImage(p){
+  return !!(p && (p.imagem || '').toString().trim());
+}
+
+function prioritizeImages(list){
+  const withImg = [];
+  const withoutImg = [];
+  for (const item of list){
+    (hasImage(item) ? withImg : withoutImg).push(item);
+  }
+  return [...withImg, ...withoutImg];
+}
+
+function getSectorValue(p){
+  const raw = (p.setor || p.sector || p.categoria || p.departamento || '').toString().trim();
+  return raw || 'Setor livre';
+}
+
+function sectorKey(val){
+  return (val || '')
+    .toString()
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'');
+}
+
+function buildSectorOptions(){
+  if (!sectorFilter) return;
+  const sectorMap = new Map();
+  const pushSector = (v) => {
+    const key = sectorKey(v);
+    if (!key) return;
+    if (!sectorMap.has(key)) sectorMap.set(key, v);
+  };
+  for (const p of itemsAll){
+    const sv = getSectorValue(p);
+    if (sv) pushSector(sv);
+  }
+  DEFAULT_SECTORS.forEach(s => pushSector(s));
+  const arr = Array.from(sectorMap.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const sig = arr.join('|');
+  if (sig === sectorOptionsSignature && sectorFilter.options.length > 1) return;
+
+  const current = sectorFilter.value || '__all';
+  const opts = ['<option value="__all">Todos os setores</option>', ...arr.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)];
+  sectorFilter.innerHTML = opts.join('');
+  sectorFilter.value = arr.includes(current) ? current : '__all';
+  sectorOptionsSignature = sig;
+}
+
+function currentQuery(){
+  const qCat = (catalogSearch?.value || '').trim();
+  const qGlobal = (globalSearch?.value || '').trim();
+  return (qCat || qGlobal).toLowerCase();
+}
+
+function applyFilters(){
+  buildSectorOptions();
+  const q = currentQuery();
+  const selectedSector = sectorFilter ? sectorFilter.value : '__all';
+
+  items = itemsAll.filter(p => {
+    const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
+    const secVal = getSectorValue(p);
+    const matchesSector = !selectedSector || selectedSector === '__all'
+      ? true
+      : (secVal && secVal.toLowerCase() === selectedSector.toLowerCase());
+    return matchesText && matchesSector;
+  });
   page = 1;
   render();
 }
@@ -656,14 +1255,33 @@ function render(){
   const end = start + PAGE_SIZE;
   const slice = items.slice(start, end);
 
+  if (!items.length){
+    const selVal = sectorFilter ? sectorFilter.value : '__all';
+    const selText = sectorFilter ? (sectorFilter.options[sectorFilter.selectedIndex]?.text || selVal) : '';
+    const reason = selVal && selVal !== '__all'
+      ? `o setor "${escapeHtml(selText || selVal)}"`
+      : 'este filtro';
+    gridEl.innerHTML = `<div class="catalog-empty">Sem produtos para ${reason}.</div>`;
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    pageInfo.textContent = '';
+    return;
+  }
+
   gridEl.innerHTML = slice.map((p, idx) => {
     const img = resolveImgPath(p.imagem);
     const hasImg = !!img;
     const safeImg = escapeHtml(img);
     const cid = `img_${page}_${idx}`;
+    const sectorLabel = getSectorValue(p) || 'Setor livre';
+    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorLabel}`);
 
     return `
       <div class="catalog-card">
+        <div class="catalog-meta">
+          <span class="catalog-pill">${escapeHtml(sectorLabel)}</span>
+          <span class="catalog-price">${escapeHtml(p.preco)}</span>
+        </div>
         <div class="catalog-thumb" id="${cid}_wrap">
           ${hasImg
             ? `<img id="${cid}" src="${safeImg}" alt="Imagem do produto" loading="lazy"
@@ -675,7 +1293,19 @@ function render(){
           }
         </div>
         <p class="catalog-name">${escapeHtml(p.nome)}</p>
-        <div class="catalog-price">${escapeHtml(p.preco)}</div>
+        <div class="catalog-actions">
+          <div class="qty-control">
+            <button class="qty-btn" type="button" data-qty="dec" data-key="${pid}">-</button>
+            <input class="qty-input" type="number" min="1" value="1" data-key="${pid}">
+            <button class="qty-btn" type="button" data-qty="inc" data-key="${pid}">+</button>
+          </div>
+          <button class="catalog-add" type="button"
+            data-add-cart="${pid}"
+            data-name="${escapeHtml(p.nome)}"
+            data-price="${escapeHtml(p.preco)}"
+            data-img="${safeImg}"
+            data-sector="${escapeHtml(sectorLabel)}">Adicionar</button>
+        </div>
       </div>
     `;
   }).join('');
@@ -685,8 +1315,199 @@ function render(){
   pageInfo.textContent = '';
 }
 
+function updateCartCount(){
+  if (!cartCountEl) return;
+  let total = 0;
+  for (const entry of cart.values()){
+    total += entry.qty || 0;
+  }
+  cartCountEl.textContent = total;
+  if (cartCountLabel) cartCountLabel.textContent = total;
+  cartCountEl.classList.remove('bump');
+  void cartCountEl.offsetWidth; // reflow to restart animation
+  cartCountEl.classList.add('bump');
+  updateCartFloater();
+}
+
+function toggleCartPanel(force){
+  if (!cartPanel) return;
+  const show = typeof force === 'boolean' ? force : !cartPanel.classList.contains('show');
+  cartPanel.classList.toggle('show', show);
+  if (show) renderCartPanel();
+}
+
+function selectSectorAndFilter(name){
+  if (!sectorFilter || !name) return;
+  buildSectorOptions();
+  if (itemsBase.length) itemsAll = [...itemsBase];
+  const targetKey = sectorKey(name);
+  let found = false;
+  for (const opt of Array.from(sectorFilter.options)){
+    if (sectorKey(opt.value) === targetKey){
+      sectorFilter.value = opt.value;
+      found = true;
+      break;
+    }
+  }
+  if (!found){
+    const opt = new Option(name, name);
+    sectorFilter.appendChild(opt);
+    sectorFilter.value = name;
+    sectorOptionsSignature = '';
+  }
+  applyFilters();
+  document.getElementById('catalogoProdutos')?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function parsePriceToNumber(str){
+  if (!str) return 0;
+  const cleaned = str.toString().replace(/\s/g,'').replace(/[R$\u00A0]/gi,'').replace(/\./g,'').replace(',','.');
+  const num = parseFloat(cleaned);
+  return Number.isFinite(num) ? num : 0;
+}
+
+function formatCurrency(num){
+  return new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL', minimumFractionDigits:2 }).format(num || 0);
+}
+
+function bestMarketEstimate(total){
+  const markets = [
+    { name:'Mercado A', factor:1 },
+    { name:'Mercado B', factor:1.06 },
+    { name:'Mercado C', factor:1.12 },
+  ];
+  let best = markets[0];
+  for (const m of markets){
+    if (total * m.factor < total * best.factor) best = m;
+  }
+  const diff = (total * best.factor) - (total * markets[0].factor);
+  return `${best.name} (${formatCurrency(total * best.factor)}${diff ? ' estimado' : ''})`;
+}
+
+function renderCartPanel(){
+  if (!cartItemsEl) return;
+  if (!cart.size){
+    cartItemsEl.innerHTML = `<div class="cart-empty">Nenhum item adicionado ainda.</div>`;
+    return;
+  }
+  const entries = Array.from(cart.entries());
+  cartItemsEl.innerHTML = entries.map(([key, { product, qty }]) => {
+    const img = resolveImgPath(product.imagem);
+    return `
+      <div class="cart-item" data-cart-key="${escapeHtml(key)}">
+        <div class="cart-thumb">
+          ${img ? `<img src="${escapeHtml(img)}" alt="">` : 'Sem imagem'}
+        </div>
+        <div class="cart-info">
+          <div class="cart-title">${escapeHtml(product.nome || '')}</div>
+          <div class="cart-meta">
+            <span>${escapeHtml(product.preco || '')}</span>
+            <span>${escapeHtml(product.setor || '')}</span>
+            <span>Qtd: ${qty}</span>
+          </div>
+          <button class="cart-remove" type="button" data-remove-key="${escapeHtml(key)}">Remover</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateCartFloater(){
+  if (!cartFloater) return;
+  if (!cart.size){
+    cartFloater.classList.remove('show');
+    return;
+  }
+
+  let count = 0;
+  let total = 0;
+  for (const { product, qty } of cart.values()){
+    count += qty || 0;
+    total += parsePriceToNumber(product.preco) * (qty || 0);
+  }
+
+  if (floaterCount) floaterCount.textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
+  if (floaterTotal) floaterTotal.textContent = formatCurrency(total);
+  if (floaterBest) floaterBest.textContent = count ? bestMarketEstimate(total) : '-';
+
+  cartFloater.classList.add('show');
+}
+
+function flashAdded(btn){
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.classList.add('added');
+  btn.textContent = 'Adicionado';
+  setTimeout(() => {
+    btn.classList.remove('added');
+    btn.textContent = original || 'Adicionar';
+  }, 1200);
+}
+
+function addToCart(btn){
+  if (!btn) return;
+  const key = btn.dataset.addCart || btn.dataset.key;
+  if (!key) return;
+
+  const card = btn.closest('.catalog-card');
+  const qtyInput = card ? card.querySelector('.qty-input') : null;
+  const qty = Math.max(1, parseInt(qtyInput?.value, 10) || 1);
+
+  const product = {
+    nome: btn.dataset.name || 'Produto',
+    preco: btn.dataset.price || '',
+    imagem: btn.dataset.img || '',
+    setor: btn.dataset.sector || ''
+  };
+
+  const current = cart.get(key) || { product, qty: 0 };
+  current.qty += qty;
+  cart.set(key, current);
+
+  updateCartCount();
+  renderCartPanel();
+  flashAdded(btn);
+}
+
 prevBtn.addEventListener('click', () => { if (page > 1){ page--; render(); }});
 nextBtn.addEventListener('click', () => { if (page < pages){ page++; render(); }});
+
+gridEl.addEventListener('click', (ev) => {
+  const qtyBtn = ev.target.closest('[data-qty]');
+  if (qtyBtn){
+    const control = qtyBtn.closest('.qty-control');
+    const input = control ? control.querySelector('.qty-input') : null;
+    if (input){
+      let val = parseInt(input.value, 10) || 1;
+      val = qtyBtn.dataset.qty === 'inc' ? val + 1 : Math.max(1, val - 1);
+      input.value = val;
+    }
+  }
+
+  const addBtn = ev.target.closest('[data-add-cart]');
+  if (addBtn){
+    addToCart(addBtn);
+  }
+});
+
+gridEl.addEventListener('change', (ev) => {
+  if (ev.target.matches('.qty-input')){
+    const v = Math.max(1, parseInt(ev.target.value, 10) || 1);
+    ev.target.value = v;
+  }
+});
+
+cartItemsEl?.addEventListener('click', (ev) => {
+  const remBtn = ev.target.closest('[data-remove-key]');
+  if (remBtn){
+    const key = remBtn.dataset.removeKey;
+    if (key && cart.has(key)){
+      cart.delete(key);
+      updateCartCount();
+      renderCartPanel();
+    }
+  }
+});
 
 function extOk(name){
   const n = (name || '').toLowerCase();
@@ -873,8 +1694,14 @@ function detectCols(headerRow){
   const idxNome = h.findIndex(x => x === 'nome' || x.includes('nome') || x.includes('produto') || x.includes('descricao'));
   const idxPreco = h.findIndex(x => x === 'preco' || x.includes('preco') || x.includes('valor') || x.includes('price'));
   const idxImg  = h.findIndex(x => x === 'imagem' || x.includes('imagem') || x.includes('foto') || x.includes('image') || x === 'img');
+  const idxSetor = h.findIndex(x => x === 'setor' || x === 'setores' || x.includes('categoria') || x.includes('departamento') || x.includes('setor'));
 
-  return { nome: idxNome >= 0 ? idxNome : 2, preco: idxPreco >= 0 ? idxPreco : 3, img: idxImg >= 0 ? idxImg : 4 };
+  return {
+    nome: idxNome >= 0 ? idxNome : 2,
+    preco: idxPreco >= 0 ? idxPreco : 3,
+    img: idxImg >= 0 ? idxImg : 4,
+    setor: idxSetor >= 0 ? idxSetor : -1
+  };
 }
 
 function sheetToRows(sheetDoc, sharedStrings){
@@ -955,6 +1782,7 @@ async function parseXlsxCatalog(fileLike){
       const nome = (r[cols.nome] ?? '').toString().trim();
       const preco = (r[cols.preco] ?? '').toString().trim();
       const imagem = (r[cols.img] ?? '').toString().trim();
+      const setor = cols.setor >= 0 ? (r[cols.setor] ?? '').toString().trim() : '';
 
       if (!nome){
         emptyStreak++;
@@ -962,7 +1790,7 @@ async function parseXlsxCatalog(fileLike){
         continue;
       }
       emptyStreak = 0;
-      out.push({ nome, preco, imagem });
+      out.push({ nome, preco, imagem, setor });
     }
 
     if (out.length) return { items: out };
@@ -973,7 +1801,7 @@ async function parseXlsxCatalog(fileLike){
 function dedupeProducts(arr){
   const seen = new Set();
   return arr.filter(p => {
-    const k = `${p.nome}||${p.preco}||${p.imagem}`;
+    const k = `${p.nome}||${p.preco}||${p.imagem}||${getSectorValue(p)}`;
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
@@ -1059,12 +1887,12 @@ function renderThrottled(){
   const now = performance.now();
   if (now - _lastRenderAt < RENDER_THROTTLE_MS) return;
   _lastRenderAt = now;
-  applySearch();
+  applyFilters();
 }
 
 async function loadFromFilesProgressive(fileLikes){
   itemsAll = [];
-  applySearch();
+  applyFilters();
 
   await pool(PARSE_CONCURRENCY, fileLikes, async (f) => {
     try{
@@ -1072,6 +1900,7 @@ async function loadFromFilesProgressive(fileLikes){
       if (res.items && res.items.length){
         itemsAll.push(...res.items);
         itemsAll = dedupeProducts(itemsAll);
+        itemsAll = prioritizeImages(itemsAll);
         renderThrottled();
       }
     }catch(e){
@@ -1080,7 +1909,9 @@ async function loadFromFilesProgressive(fileLikes){
   });
 
   itemsAll = dedupeProducts(itemsAll);
-  applySearch();
+  itemsAll = prioritizeImages(itemsAll);
+  itemsBase = [...itemsAll];
+  applyFilters();
 }
 
 async function loadFromFiles(fileLikes){
@@ -1105,7 +1936,8 @@ async function autoLoadSilent(){
   const cached = cacheRead(cKey);
   if (cached && cached.length){
     itemsAll = cached;
-    applySearch();
+    itemsBase = [...itemsAll];
+    applyFilters();
     return;
   }
 
@@ -1127,7 +1959,11 @@ async function autoLoadSilent(){
   if (!virtualFiles.length) return;
 
   await loadFromFilesProgressive(virtualFiles);
-  if (itemsAll.length) cacheWrite(cKey, itemsAll);
+  if (itemsAll.length){
+    itemsAll = prioritizeImages(itemsAll);
+    itemsBase = [...itemsAll];
+    cacheWrite(cKey, itemsAll);
+  }
 }
 
 /* ===========================
@@ -1138,8 +1974,27 @@ btnLoad.addEventListener('click', async () => {
   await loadFromFiles(files);
 });
 
-globalSearch.addEventListener('input', applySearch);
-globalSearchBtn.addEventListener('click', applySearch);
+function syncGlobalToCatalog(){
+  if (catalogSearch && globalSearch) catalogSearch.value = globalSearch.value;
+  if (itemsBase.length) itemsAll = [...itemsBase];
+  applyFilters();
+}
+
+globalSearch.addEventListener('input', syncGlobalToCatalog);
+globalSearchBtn.addEventListener('click', syncGlobalToCatalog);
+catalogSearch?.addEventListener('input', () => {
+  if (globalSearch) globalSearch.value = catalogSearch.value;
+  applyFilters();
+});
+catalogSearchClear?.addEventListener('click', () => {
+  if (catalogSearch) catalogSearch.value = '';
+  if (globalSearch) globalSearch.value = '';
+  applyFilters();
+});
+sectorFilter?.addEventListener('change', () => {
+  if (itemsBase.length) itemsAll = [...itemsBase];
+  applyFilters();
+});
 
 /* ===========================
    CONTROLES: Ctrl+Shift+L ou #admin
@@ -1159,10 +2014,48 @@ if (location.hash && location.hash.toLowerCase().includes('admin')){
 
 btnAuto.addEventListener('click', autoLoadSilent);
 
+document.querySelector('.cart')?.addEventListener('click', () => toggleCartPanel());
+cartCloseBtn?.addEventListener('click', () => toggleCartPanel(false));
+floaterOpenCart?.addEventListener('click', () => toggleCartPanel(true));
+floaterVisitSite?.addEventListener('click', () => {
+  try{
+    window.open(SITE_URL, '_blank');
+  }catch{
+    location.href = SITE_URL;
+  }
+});
+
+footerBackBtn?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.querySelector('.sectors-grid')?.addEventListener('click', (ev) => {
+  const card = ev.target.closest('.sector-card');
+  if (!card) return;
+  const name = (card.textContent || '').trim();
+  selectSectorAndFilter(name);
+});
+
+randomizeBtn?.addEventListener('click', () => {
+  if (!itemsAll.length) return;
+  if (!itemsBase.length) itemsBase = [...itemsAll];
+  const shuffle = (arr) => arr
+    .map(p => ({ p, sort: Math.random() }))
+    .sort((a,b) => a.sort - b.sort)
+    .map(({p}) => p);
+  const withImg = [];
+  const withoutImg = [];
+  for (const p of itemsBase){
+    (hasImage(p) ? withImg : withoutImg).push(p);
+  }
+  itemsAll = [...shuffle(withImg), ...shuffle(withoutImg)];
+  applyFilters();
+});
+
 /* ===========================
    INIT (silencioso)
 =========================== */
-render();
+applyFilters();
 autoLoadSilent();
 </script>
 
