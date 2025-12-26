@@ -1431,6 +1431,8 @@ function selectSectorAndFilter(name){
   buildSectorOptions();
   if (itemsBase.length) itemsAll = [...itemsBase];
   const targetKey = sectorKey(name);
+  if (catalogSearch) catalogSearch.value = '';
+  if (globalSearch) globalSearch.value = '';
   let found = false;
   for (const opt of Array.from(sectorFilter.options)){
     const optLabel = decodeSectorValue(opt.value);
