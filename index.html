@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// Força o layout de desktop em dispositivos móveis
+(function(){
+  const meta = document.querySelector('meta[name=\"viewport\"]');
+  if (!meta) return;
+  const ua = navigator.userAgent || '';
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+  const smallWidth = Math.min(window.innerWidth || 0, window.screen.width || 0);
+  if (isMobile || smallWidth < 1100){
+    meta.setAttribute('content', 'width=1280, initial-scale=0.7');
+  }
+})();
+</script>
 <title>PreçoVs</title>
 
 <style>
