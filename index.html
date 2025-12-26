@@ -16,7 +16,8 @@
     if (isMobile || deviceWidth < 1200){
       const targetWidth = 1280;
       const scale = Math.max(0.3, Math.min(1, deviceWidth / targetWidth));
-      meta.setAttribute('content', `width=${targetWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=${scale}, user-scalable=no`);
+      // Define um zoom inicial para caber no eixo X, mas mantém o pinch-zoom liberado
+      meta.setAttribute('content', `width=${targetWidth}, initial-scale=${scale}`);
       document.documentElement.style.overflowX = 'hidden';
       document.body.style.overflowX = 'hidden';
       document.documentElement.style.width = '100%';
