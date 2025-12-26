@@ -336,8 +336,8 @@ body {
 .sectors-grid .sector-card:nth-child(12) { background-image: url("setor12.png"); }
 
 @media (max-width: 1200px) { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-@media (max-width: 820px)  { .sectors-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (max-width: 520px)  { .sectors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 820px)  { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 520px)  { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 
 /* ===========================
       CATÁLOGO — SÓ PRODUTOS VISÍVEL
@@ -455,6 +455,10 @@ body {
   grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: 12px;
   min-width: 750px;
+}
+.catalog-grid.catalog-grid-mobile{
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
 }
 .catalog-empty{
   grid-column: 1 / -1;
@@ -1169,7 +1173,8 @@ document.getElementById('goHow').addEventListener('click', () => {
 /* ===========================
    CATÁLOGO (XLSX + AUTO)
 =========================== */
-const PAGE_SIZE = 50;
+const IS_MOBILE = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+const PAGE_SIZE = IS_MOBILE ? 30 : 50;
 let itemsBase = [];
 let itemsAll = [];
 let items = [];
@@ -1187,6 +1192,7 @@ const gridEl = document.getElementById('grid');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
+if (IS_MOBILE && gridEl) gridEl.classList.add('catalog-grid-mobile');
 
 const globalSearch = document.getElementById('globalSearch');
 const globalSearchBtn = document.getElementById('globalSearchBtn');
@@ -1271,6 +1277,13 @@ function sectorKey(val){
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'');
 }
+function encodeSectorValue(val){
+  try{ return encodeURIComponent(val || ''); }catch{ return ''; }
+}
+function decodeSectorValue(val){
+  if (!val || val === '__all') return '__all';
+  try{ return decodeURIComponent(val); }catch{ return val; }
+}
 
 function buildSectorOptions(){
   if (!sectorFilter) return;
@@ -1289,10 +1302,13 @@ function buildSectorOptions(){
   const sig = arr.join('|');
   if (sig === sectorOptionsSignature && sectorFilter.options.length > 1) return;
 
-  const current = sectorFilter.value || '__all';
-  const opts = ['<option value="__all">Todos os setores</option>', ...arr.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)];
+  const currentRaw = sectorFilter.value && sectorFilter.value !== '__all'
+    ? decodeSectorValue(sectorFilter.value)
+    : '__all';
+  const opts = ['<option value="__all">Todos os setores</option>', ...arr.map(s => `<option value="${encodeSectorValue(s)}">${escapeHtml(s)}</option>`)];
   sectorFilter.innerHTML = opts.join('');
-  sectorFilter.value = arr.includes(current) ? current : '__all';
+  const hasCurrent = currentRaw !== '__all' && arr.includes(currentRaw);
+  sectorFilter.value = hasCurrent ? encodeSectorValue(currentRaw) : '__all';
   sectorOptionsSignature = sig;
 }
 
@@ -1305,13 +1321,13 @@ function currentQuery(){
 function applyFilters(){
   buildSectorOptions();
   const q = currentQuery();
-  const selectedSector = sectorFilter ? sectorFilter.value : '__all';
-  const selKey = sectorKey(selectedSector);
+  const selectedRaw = sectorFilter ? decodeSectorValue(sectorFilter.value) : '__all';
+  const selKey = sectorKey(selectedRaw);
 
   items = itemsAll.filter(p => {
     const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
     const secVal = getSectorValue(p);
-    const matchesSector = !selectedSector || selectedSector === '__all'
+    const matchesSector = !selectedRaw || selectedRaw === '__all'
       ? true
       : (sectorKey(secVal) === selKey);
     return matchesText && matchesSector;
