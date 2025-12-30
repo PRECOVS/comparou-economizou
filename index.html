@@ -8,8 +8,8 @@
 (function(){
   const meta = document.querySelector('meta[name=\"viewport\"]');
   if (!meta) return;
-  const ua = navigator.userAgent || '';
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+  meta.setAttribute('content', 'width=device-width, initial-scale=1, user-scalable=yes, maximum-scale=5');
+  return;
 
   const applyViewport = () => {
     const deviceWidthRaw = Math.min(window.innerWidth || 0, window.screen.width || 0) || 1280;
