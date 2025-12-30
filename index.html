@@ -388,6 +388,10 @@ body {
   box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12);
 }
 .catalog-filter select:focus{ border-color: rgba(34,197,94,0.6); box-shadow:0 0 0 1px rgba(34,197,94,0.35); }
+.catalog-section-filter.disabled{ opacity:0.6; }
+.catalog-section-filter.disabled select{ cursor:not-allowed; }
+.catalog-tags{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.catalog-pill-alt{ background: rgba(34,197,94,0.16); }
 .catalog-search-box{
   display:flex;
   align-items:center;
@@ -1090,6 +1094,12 @@ body {
           <option value="__all">Todos os setores</option>
         </select>
       </div>
+      <div class="catalog-filter catalog-section-filter" id="sectionFilterWrap">
+        <label for="sectionFilter">Seção (opcional)</label>
+        <select id="sectionFilter" disabled>
+          <option value="__all">Todas as seções</option>
+        </select>
+      </div>
       <div class="catalog-search">
         <label for="catalogSearch">Buscar no catálogo (ao vivo)</label>
         <div class="catalog-search-box">
@@ -1200,6 +1210,8 @@ const globalSearchBtn = document.getElementById('globalSearchBtn');
 const catalogSearch = document.getElementById('catalogSearch');
 const catalogSearchClear = document.getElementById('catalogSearchClear');
 const sectorFilter = document.getElementById('sectorFilter');
+const sectionFilter = document.getElementById('sectionFilter');
+const sectionFilterWrap = document.getElementById('sectionFilterWrap');
 const cartCountEl = document.getElementById('cartCount');
 const cartCountLabel = document.getElementById('cartCountLabel');
 const cartPanel = document.getElementById('cartPanel');
@@ -1222,6 +1234,8 @@ const DEFAULT_SECTORS = [
 
 const cart = new Map();
 let sectorOptionsSignature = '';
+let sectionOptionsSignature = '';
+const sectorHints = new Set();
 
 function setStatus(msg){ statusEl.textContent = msg; }
 function setDebug(html){ debugEl.innerHTML = html; }
@@ -1270,10 +1284,35 @@ function getSectorValue(p){
   // Mantém o valor do setor em branco para não criar a opção "Setor livre" no filtro
   return raw;
 }
+function getSectionValue(p){
+  return (p.secao || p.section || p.subsetor || '').toString().trim();
+}
 function sectorFromPath(name){
   const path = (name || '').toString().replace(/\\/g, '/');
-  const first = path.split('/').filter(Boolean)[0] || '';
-  const decoded = (() => { try{ return decodeURIComponent(first); }catch{ return first; } })();
+  const parts = path.split('/').filter(Boolean);
+  if (!parts.length) return '';
+  // se vier "PRODUTOS/Setor/Arquivo.xlsx", ignora a pasta raiz "PRODUTOS"
+  const first = parts[0];
+  const maybeSector = (first || '').toLowerCase();
+  const sectorPart = (maybeSector === 'produtos' && parts.length > 1) ? parts[1] : first;
+  const decoded = (() => { try{ return decodeURIComponent(sectorPart); }catch{ return sectorPart; } })();
+  return decoded.replace(/[_-]+/g, ' ').trim();
+}
+function sectionFromPath(name, sectorHint){
+  const path = (name || '').toString().replace(/\\/g, '/');
+  const parts = path.split('/').filter(Boolean);
+  if (!parts.length) return '';
+  const file = parts[parts.length - 1];
+  let fileNoExt = file.replace(/\.[^.]+$/, '');
+
+  const sectorBase = (sectorHint || '').toString().trim();
+  if (sectorBase){
+    const escaped = sectorBase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const rx = new RegExp(`^${escaped}\\s*[-_]\\s*`, 'i');
+    fileNoExt = fileNoExt.replace(rx, '');
+  }
+
+  const decoded = (() => { try{ return decodeURIComponent(fileNoExt); }catch{ return fileNoExt; } })();
   return decoded.replace(/[_-]+/g, ' ').trim();
 }
 
@@ -1292,6 +1331,21 @@ function decodeSectorValue(val){
   if (!val || val === '__all') return '__all';
   try{ return decodeURIComponent(val); }catch{ return val; }
 }
+function sectionKey(val){
+  return (val || '')
+    .toString()
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'');
+}
+function encodeSectionValue(val){
+  try{ return encodeURIComponent(val || ''); }catch{ return ''; }
+}
+function decodeSectionValue(val){
+  if (!val || val === '__all') return '__all';
+  try{ return decodeURIComponent(val); }catch{ return val; }
+}
 
 function buildSectorOptions(){
   if (!sectorFilter) return;
@@ -1304,6 +1358,10 @@ function buildSectorOptions(){
   for (const p of itemsAll){
     const sv = getSectorValue(p);
     if (sv) pushSector(sv);
+  }
+  // acrescenta setores vindos dos caminhos dos arquivos carregados
+  for (const sh of sectorHints){
+    pushSector(sh);
   }
   DEFAULT_SECTORS.forEach(s => pushSector(s));
   const arr = Array.from(sectorMap.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
@@ -1319,6 +1377,46 @@ function buildSectorOptions(){
   sectorFilter.value = hasCurrent ? encodeSectorValue(currentRaw) : '__all';
   sectorOptionsSignature = sig;
 }
+function buildSectionOptions(selectedSectorRaw){
+  if (!sectionFilter) return;
+  const sectorNorm = sectorKey(selectedSectorRaw);
+  const wrap = sectionFilterWrap;
+
+  if (!sectorNorm || selectedSectorRaw === '__all'){
+    sectionFilter.innerHTML = '<option value="__all">Todas as seções</option>';
+    sectionFilter.value = '__all';
+    sectionFilter.disabled = true;
+    if (wrap) wrap.classList.add('disabled');
+    sectionOptionsSignature = '';
+    return;
+  }
+
+  const sectionMap = new Map();
+  for (const p of itemsAll){
+    const secVal = getSectorValue(p);
+    if (!secVal || sectorKey(secVal) !== sectorNorm) continue;
+    const section = getSectionValue(p);
+    const key = sectionKey(section);
+    if (!key) continue;
+    if (!sectionMap.has(key)) sectionMap.set(key, section);
+  }
+  const arr = Array.from(sectionMap.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const sig = `${sectorNorm}__${arr.join('|')}`;
+  const hasSections = arr.length > 0;
+
+  if (sig === sectionOptionsSignature && sectionFilter.options.length){
+    sectionFilter.disabled = !hasSections;
+    if (wrap) wrap.classList.toggle('disabled', !hasSections);
+    return;
+  }
+
+  const opts = ['<option value="__all">Todas as seções</option>', ...arr.map(s => `<option value="${encodeSectionValue(s)}">${escapeHtml(s)}</option>`)];
+  sectionFilter.innerHTML = opts.join('');
+  sectionFilter.value = '__all';
+  sectionFilter.disabled = !hasSections;
+  if (wrap) wrap.classList.toggle('disabled', !hasSections);
+  sectionOptionsSignature = sig;
+}
 
 function currentQuery(){
   const qCat = (catalogSearch?.value || '').trim();
@@ -1328,18 +1426,25 @@ function currentQuery(){
 
 function applyFilters(){
   buildSectorOptions();
+  const selectedSectorRaw = sectorFilter ? decodeSectorValue(sectorFilter.value) : '__all';
+  buildSectionOptions(selectedSectorRaw);
   const q = currentQuery();
-  const selectedRaw = sectorFilter ? decodeSectorValue(sectorFilter.value) : '__all';
-  const selKey = sectorKey(selectedRaw);
+  const selKey = sectorKey(selectedSectorRaw);
+  const selectedSectionRaw = sectionFilter ? decodeSectionValue(sectionFilter.value) : '__all';
+  const selSectionKey = sectionKey(selectedSectionRaw);
 
   items = itemsAll.filter(p => {
     const secVal = getSectorValue(p);
     if (!secVal) return false; // ignora produtos sem setor
+    const sectionVal = getSectionValue(p);
     const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
-    const matchesSector = !selectedRaw || selectedRaw === '__all'
+    const matchesSector = !selectedSectorRaw || selectedSectorRaw === '__all'
       ? true
       : (sectorKey(secVal) === selKey);
-    return matchesText && matchesSector;
+    const matchesSection = !selectedSectionRaw || selectedSectionRaw === '__all'
+      ? true
+      : (sectionKey(sectionVal) === selSectionKey);
+    return matchesText && matchesSector && matchesSection;
   });
   page = 1;
   render();
@@ -1373,13 +1478,16 @@ function render(){
     const cid = `img_${page}_${idx}`;
     const sectorValue = getSectorValue(p);
     const sectorLabel = sectorValue;
-    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}`);
+    const sectionLabel = getSectionValue(p);
+    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}||${sectionLabel || ''}`);
     const sectorPill = sectorLabel ? `<span class="catalog-pill">${escapeHtml(sectorLabel)}</span>` : '';
+    const sectionPill = sectionLabel ? `<span class="catalog-pill catalog-pill-alt">${escapeHtml(sectionLabel)}</span>` : '';
+    const tags = `<div class="catalog-tags">${sectorPill}${sectionPill}</div>`;
 
     return `
       <div class="catalog-card">
         <div class="catalog-meta">
-          ${sectorPill}
+          ${tags}
           <span class="catalog-price">${escapeHtml(p.preco)}</span>
         </div>
         <div class="catalog-thumb" id="${cid}_wrap">
@@ -1404,7 +1512,8 @@ function render(){
             data-name="${escapeHtml(p.nome)}"
             data-price="${escapeHtml(p.preco)}"
             data-img="${safeImg}"
-            data-sector="${escapeHtml(sectorLabel)}">Adicionar</button>
+            data-sector="${escapeHtml(sectorLabel)}"
+            data-section="${escapeHtml(sectionLabel)}">Adicionar</button>
         </div>
       </div>
     `;
@@ -1439,6 +1548,10 @@ function toggleCartPanel(force){
 function selectSectorAndFilter(name){
   if (!sectorFilter || !name) return;
   buildSectorOptions();
+  if (sectionFilter){
+    sectionFilter.value = '__all';
+    sectionOptionsSignature = '';
+  }
   if (itemsBase.length) itemsAll = [...itemsBase];
   const targetKey = sectorKey(name);
   if (catalogSearch) catalogSearch.value = '';
@@ -1497,6 +1610,7 @@ function renderCartPanel(){
   const entries = Array.from(cart.entries());
   cartItemsEl.innerHTML = entries.map(([key, { product, qty }]) => {
     const img = resolveImgPath(product.imagem);
+    const sectionTag = product.secao ? `<span>${escapeHtml(product.secao || '')}</span>` : '';
     return `
       <div class="cart-item" data-cart-key="${escapeHtml(key)}">
         <div class="cart-thumb">
@@ -1507,6 +1621,7 @@ function renderCartPanel(){
           <div class="cart-meta">
             <span>${escapeHtml(product.preco || '')}</span>
             <span>${escapeHtml(product.setor || '')}</span>
+            ${sectionTag}
             <span>Qtd: ${qty}</span>
           </div>
           <button class="cart-remove" type="button" data-remove-key="${escapeHtml(key)}">Remover</button>
@@ -1561,7 +1676,8 @@ function addToCart(btn){
     nome: btn.dataset.name || 'Produto',
     preco: btn.dataset.price || '',
     imagem: btn.dataset.img || '',
-    setor: btn.dataset.sector || ''
+    setor: btn.dataset.sector || '',
+    secao: btn.dataset.section || ''
   };
 
   const current = cart.get(key) || { product, qty: 0 };
@@ -1628,6 +1744,8 @@ function gatherFiles(){
     const key = `${f.webkitRelativePath||''}||${f.name}||${f.size}`;
     if (seen.has(key)) continue;
     seen.add(key);
+    const sectorHint = sectorFromPath(f.webkitRelativePath || f.name || '');
+    if (sectorHint) sectorHints.add(sectorHint);
     out.push(f);
   }
   return out;
@@ -1799,12 +1917,14 @@ function detectCols(headerRow){
   const idxPreco = h.findIndex(x => x === 'preco' || x.includes('preco') || x.includes('valor') || x.includes('price'));
   const idxImg  = h.findIndex(x => x === 'imagem' || x.includes('imagem') || x.includes('foto') || x.includes('image') || x === 'img');
   const idxSetor = h.findIndex(x => x === 'setor' || x === 'setores' || x.includes('categoria') || x.includes('departamento') || x.includes('setor'));
+  const idxSecao = h.findIndex(x => x === 'secao' || x.includes('secao') || x.includes('subsetor') || x.includes('sessao'));
 
   return {
     nome: idxNome >= 0 ? idxNome : 2,
     preco: idxPreco >= 0 ? idxPreco : 3,
     img: idxImg >= 0 ? idxImg : 4,
-    setor: idxSetor >= 0 ? idxSetor : -1
+    setor: idxSetor >= 0 ? idxSetor : -1,
+    secao: idxSecao >= 0 ? idxSecao : -1
   };
 }
 
@@ -1882,20 +2002,21 @@ async function parseXlsxCatalog(fileLike){
     let emptyStreak = 0;
 
     for (let i = headerIdx + 1; i < rows.length; i++){
-      const r = explodeRowDense(rows[i]);
-      const nome = (r[cols.nome] ?? '').toString().trim();
-      const preco = (r[cols.preco] ?? '').toString().trim();
-      const imagem = (r[cols.img] ?? '').toString().trim();
-      const setor = cols.setor >= 0 ? (r[cols.setor] ?? '').toString().trim() : '';
+    const r = explodeRowDense(rows[i]);
+    const nome = (r[cols.nome] ?? '').toString().trim();
+    const preco = (r[cols.preco] ?? '').toString().trim();
+    const imagem = (r[cols.img] ?? '').toString().trim();
+    const setor = cols.setor >= 0 ? (r[cols.setor] ?? '').toString().trim() : '';
+    const secao = cols.secao >= 0 ? (r[cols.secao] ?? '').toString().trim() : '';
 
-      if (!nome){
-        emptyStreak++;
-        if (emptyStreak >= 40) break;
-        continue;
-      }
-      emptyStreak = 0;
-      out.push({ nome, preco, imagem, setor });
+    if (!nome){
+      emptyStreak++;
+      if (emptyStreak >= 40) break;
+      continue;
     }
+    emptyStreak = 0;
+    out.push({ nome, preco, imagem, setor, secao });
+  }
 
     if (out.length) return { items: out };
   }
@@ -1905,7 +2026,7 @@ async function parseXlsxCatalog(fileLike){
 function dedupeProducts(arr){
   const seen = new Set();
   return arr.filter(p => {
-    const k = `${p.nome}||${p.preco}||${p.imagem}||${getSectorValue(p)}`;
+    const k = `${p.nome}||${p.preco}||${p.imagem}||${getSectorValue(p)}||${getSectionValue(p)}`;
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
@@ -1933,7 +2054,7 @@ function normalizeIndexJson(j){
 const FETCH_CONCURRENCY = 6;   // downloads simultâneos
 const PARSE_CONCURRENCY = 2;   // parses simultâneos (CPU)
 const RENDER_THROTTLE_MS = 180;
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 4;
 
 async function pool(limit, list, worker){
   const ret = new Array(list.length);
@@ -2004,9 +2125,12 @@ async function loadFromFilesProgressive(fileLikes){
       const res = await parseXlsxCatalog(f);
       if (res.items && res.items.length){
         const sectorHint = sectorFromPath(f.webkitRelativePath || f.name || '');
+        const sectionHint = sectionFromPath(f.webkitRelativePath || f.name || '', sectorHint);
+        if (sectorHint) sectorHints.add(sectorHint);
         const mapped = res.items.map(it => ({
           ...it,
-          setor: it.setor || it.sector || it.categoria || it.departamento || sectorHint
+          setor: it.setor || it.sector || it.categoria || it.departamento || sectorHint,
+          secao: it.secao || it.section || it.subsetor || sectionHint
         }));
         itemsAll.push(...mapped);
         itemsAll = dedupeProducts(itemsAll);
@@ -2056,10 +2180,13 @@ async function autoLoadSilent(){
     const url = `./PRODUTOS/${encodePath(safeName)}?v=${t}`;
 
     try{
+      const sectorHint = sectorFromPath(safeName);
+      const sectionHint = sectionFromPath(safeName, sectorHint);
+      if (sectorHint) sectorHints.add(sectorHint);
       const r = await fetch(url, { cache: 'no-store' });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const ab = await r.arrayBuffer();
-      return { name: safeName, arrayBuffer: async () => ab };
+      return { name: safeName, sectorHint, sectionHint, arrayBuffer: async () => ab };
     }catch(e){
       console.warn('AUTO fetch falhou:', safeName, e);
       return null;
@@ -2102,6 +2229,14 @@ catalogSearchClear?.addEventListener('click', () => {
   applyFilters();
 });
 sectorFilter?.addEventListener('change', () => {
+  if (sectionFilter){
+    sectionFilter.value = '__all';
+    sectionOptionsSignature = '';
+  }
+  if (itemsBase.length) itemsAll = [...itemsBase];
+  applyFilters();
+});
+sectionFilter?.addEventListener('change', () => {
   if (itemsBase.length) itemsAll = [...itemsBase];
   applyFilters();
 });
