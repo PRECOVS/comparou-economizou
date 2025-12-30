@@ -1270,6 +1270,12 @@ function getSectorValue(p){
   // Mantém o valor do setor em branco para não criar a opção "Setor livre" no filtro
   return raw;
 }
+function sectorFromPath(name){
+  const path = (name || '').toString().replace(/\\/g, '/');
+  const first = path.split('/').filter(Boolean)[0] || '';
+  const decoded = (() => { try{ return decodeURIComponent(first); }catch{ return first; } })();
+  return decoded.replace(/[_-]+/g, ' ').trim();
+}
 
 function sectorKey(val){
   return (val || '')
@@ -1927,6 +1933,7 @@ function normalizeIndexJson(j){
 const FETCH_CONCURRENCY = 6;   // downloads simultâneos
 const PARSE_CONCURRENCY = 2;   // parses simultâneos (CPU)
 const RENDER_THROTTLE_MS = 180;
+const CACHE_VERSION = 2;
 
 async function pool(limit, list, worker){
   const ret = new Array(list.length);
@@ -1957,7 +1964,7 @@ async function sha256Base64(str){
 
 async function cacheKeyFor(names){
   const sig = await sha256Base64(JSON.stringify(names));
-  return `precovs_catalog_${sig}`;
+  return `precovs_catalog_v${CACHE_VERSION}_${sig}`;
 }
 
 function cacheRead(key){
@@ -1996,7 +2003,12 @@ async function loadFromFilesProgressive(fileLikes){
     try{
       const res = await parseXlsxCatalog(f);
       if (res.items && res.items.length){
-        itemsAll.push(...res.items);
+        const sectorHint = sectorFromPath(f.webkitRelativePath || f.name || '');
+        const mapped = res.items.map(it => ({
+          ...it,
+          setor: it.setor || it.sector || it.categoria || it.departamento || sectorHint
+        }));
+        itemsAll.push(...mapped);
         itemsAll = dedupeProducts(itemsAll);
         itemsAll = prioritizeImages(itemsAll);
         renderThrottled();
