@@ -1270,10 +1270,6 @@ function getSectorValue(p){
   // Mantém o valor do setor em branco para não criar a opção "Setor livre" no filtro
   return raw;
 }
-function getSectorLabel(p){
-  const raw = getSectorValue(p);
-  return raw || 'Setor livre';
-}
 
 function sectorKey(val){
   return (val || '')
@@ -1331,8 +1327,9 @@ function applyFilters(){
   const selKey = sectorKey(selectedRaw);
 
   items = itemsAll.filter(p => {
-    const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
     const secVal = getSectorValue(p);
+    if (!secVal) return false; // ignora produtos sem setor
+    const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
     const matchesSector = !selectedRaw || selectedRaw === '__all'
       ? true
       : (sectorKey(secVal) === selKey);
@@ -1368,8 +1365,8 @@ function render(){
     const hasImg = !!img;
     const safeImg = escapeHtml(img);
     const cid = `img_${page}_${idx}`;
-    const sectorLabel = getSectorLabel(p);
     const sectorValue = getSectorValue(p);
+    const sectorLabel = sectorValue;
     const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}`);
     const sectorPill = sectorLabel ? `<span class="catalog-pill">${escapeHtml(sectorLabel)}</span>` : '';
 
