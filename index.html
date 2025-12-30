@@ -1267,7 +1267,8 @@ function prioritizeImages(list){
 
 function getSectorValue(p){
   const raw = (p.setor || p.sector || p.categoria || p.departamento || '').toString().trim();
-  return raw || 'Setor livre';
+  // Mantém o valor do setor em branco para não criar a opção "Setor livre" no filtro
+  return raw;
 }
 
 function sectorKey(val){
