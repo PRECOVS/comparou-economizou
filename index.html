@@ -60,7 +60,9 @@ body {
   display: flex;
   flex-direction: column;
   font-size: clamp(14px, 1.6vw, 16px);
+  overflow-x:hidden;
 }
+html { width:100%; max-width:100%; overflow-x:hidden; }
 
 .page-main{ flex:1; display:flex; flex-direction:column; }
 
@@ -337,8 +339,9 @@ body {
 .sectors-grid .sector-card:nth-child(12) { background-image: url("setor12.png"); }
 
 @media (max-width: 1200px) { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
-@media (max-width: 820px)  { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
-@media (max-width: 520px)  { .sectors-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
+@media (max-width: 1024px) { .sectors-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
+@media (max-width: 820px)  { .sectors-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
+@media (max-width: 520px)  { .sectors-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; } }
 
 /* ===========================
       CATÁLOGO — SÓ PRODUTOS VISÍVEL
@@ -509,6 +512,7 @@ body {
   display:flex;
   align-items:center;
   gap:10px;
+  flex-wrap:wrap;
   margin-top:auto;
 }
 .qty-control{
@@ -519,6 +523,7 @@ body {
   border-radius:10px;
   overflow:hidden;
   box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12);
+  min-width:130px;
 }
 .qty-btn{
   width:36px;
@@ -532,6 +537,7 @@ body {
   display:flex;
   align-items:center;
   justify-content:center;
+  color: var(--accent-green);
 }
 .qty-btn + .qty-btn{ border-left:1px solid rgba(255,255,255,0.06); }
 .qty-btn:hover{ background:rgba(34,197,94,0.15); }
@@ -567,10 +573,36 @@ body {
 .catalog-grid.catalog-grid-mobile .catalog-card{ gap:14px; }
 .catalog-grid.catalog-grid-mobile .catalog-name{ font-size:clamp(1.15rem, 4vw, 1.45rem); line-height:1.3; }
 .catalog-grid.catalog-grid-mobile .catalog-meta{ font-size:0.95rem; }
-.catalog-grid.catalog-grid-mobile .qty-btn{ width:46px; height:46px; font-size:22px; }
+.catalog-grid.catalog-grid-mobile .qty-btn{ width:46px; height:46px; font-size:22px; color:var(--accent-green); }
 .catalog-grid.catalog-grid-mobile .qty-input{ width:68px; height:46px; font-size:1.05rem; }
 .catalog-grid.catalog-grid-mobile .catalog-add{ padding:13px 14px; font-size:1.05rem; }
 .catalog-grid.catalog-grid-mobile .catalog-price{ font-size:clamp(1.1rem, 3.8vw, 1.35rem); }
+.catalog-grid.catalog-grid-mobile .catalog-price-strong{ font-size:clamp(1.4rem, 5vw, 1.8rem); }
+
+/* Mobile landscape: 4 colunas */
+@media (max-width: 1024px) and (orientation: landscape){
+  .catalog-grid,
+  .catalog-grid.catalog-grid-mobile{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-width:0;
+  }
+  .catalog-grid{ min-width:0; }
+  .catalog-shell{
+    overflow-x:hidden;
+    padding:12px;
+    width:100%;
+    max-width:100%;
+    padding-inline: calc(12px + env(safe-area-inset-left));
+    padding-inline-end: calc(12px + env(safe-area-inset-right));
+  }
+  .page-section{
+    width:100%;
+    max-width:100%;
+    margin:0 auto;
+    padding-inline: calc(14px + env(safe-area-inset-left));
+    padding-inline-end: calc(14px + env(safe-area-inset-right));
+  }
+}
 
 @media (max-width: 720px){
   .catalog-toolbar{
@@ -851,6 +883,7 @@ body {
   left:50%;
   transform:translateX(-50%) translateY(120%);
   width:min(520px, 90vw);
+  box-sizing:border-box;
   background: linear-gradient(160deg, rgba(18,24,40,0.92), rgba(15,23,42,0.9));
   border:1px solid rgba(255,255,255,0.06);
   border-radius:16px;
@@ -960,6 +993,44 @@ body {
   min-width:140px;
   box-shadow:0 10px 30px rgba(34,197,94,0.18);
 }
+.floater-toggle{
+  position:fixed;
+  bottom:70px;
+  left:50%;
+  transform: translateX(-50%);
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.2);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), rgba(0,0,0,0.8));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 0 12px rgba(0,255,180,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+  animation: glowPulse 2s linear infinite;
+  z-index: 999;
+}
+.floater-toggle.docked{ transition: bottom 0.25s ease, transform 0.2s ease; }
+.floater-toggle.alert{
+  animation: none;
+  box-shadow:0 0 14px rgba(255,0,0,0.6), 0 0 0 2px rgba(255,0,0,0.3);
+  background: radial-gradient(circle at 30% 30%, rgba(255,120,120,0.2), rgba(60,0,0,0.85));
+}
+.floater-toggle.flash-green{
+  box-shadow:0 0 16px rgba(0,255,80,0.8), 0 0 0 2px rgba(0,255,80,0.35);
+  background: radial-gradient(circle at 30% 30%, rgba(0,255,120,0.25), rgba(0,40,0,0.85));
+}
+.floater-toggle[data-state="open"]{ box-shadow:0 0 14px rgba(0,255,180,0.55), 0 0 0 2px rgba(255,255,255,0.12); }
+.floater-toggle:active{ transform: translateX(-50%) scale(0.96); }
+@keyframes glowPulse{
+  0%{ box-shadow:0 0 10px rgba(255,0,128,0.4), 0 0 0 1px rgba(255,255,255,0.08); }
+  33%{ box-shadow:0 0 12px rgba(0,255,180,0.45), 0 0 0 1px rgba(255,255,255,0.1); }
+  66%{ box-shadow:0 0 12px rgba(0,140,255,0.45), 0 0 0 1px rgba(255,255,255,0.1); }
+  100%{ box-shadow:0 0 10px rgba(255,0,128,0.4), 0 0 0 1px rgba(255,255,255,0.08); }
+}
 .catalog-thumb{
   width:100%;
   aspect-ratio: 1/1;
@@ -989,6 +1060,11 @@ body {
   line-height:1.25;
   margin:0;
   word-break:break-word;
+  min-height:2.6em;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 .catalog-price{
   font-weight:900;
@@ -996,6 +1072,26 @@ body {
   white-space:nowrap;
   margin-left:auto;
   font-size:clamp(1rem, 1vw, 1.25rem);
+}
+.catalog-price-strong{
+  margin-top:2px;
+  color:transparent;
+  font-weight:900;
+  font-size:clamp(1.2rem, 1.8vw, 1.5rem);
+  letter-spacing:0.01em;
+  min-height:1.6em;
+  display:flex;
+  align-items:center;
+  background: linear-gradient(90deg, var(--accent-green), #32ff7e, var(--accent-green));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: priceShimmer 3s ease-in-out infinite;
+}
+@keyframes priceShimmer{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
 }
 
 .catalog-pager{
@@ -1048,7 +1144,7 @@ body {
   .hero { gap:18px; }
   .page-section{ padding:18px 12px; }
   .catalog-shell{ padding:12px; }
-  .cart-panel{ width:96vw; right:2vw; max-height:86vh; }
+  .cart-panel{ width:88vw; right:6vw; max-height:78vh; }
   .cart-title{ font-size:22px; }
   .cart-meta{ font-size:15px; }
   .cart-line-prices{ font-size:1.25rem; }
@@ -1057,13 +1153,71 @@ body {
   .cart-remove{ font-size:15px; padding:10px 14px; }
   .cart-summary{ font-size:1.2rem; padding:16px; }
   .cart-summary strong{ font-size:1.4rem; }
-  .cart-floater{ width:96vw; left:2vw; transform:translateY(120%); }
-  .cart-floater-label{ font-size:1.3rem; }
-  .cart-floater-values{ font-size:1.15rem; }
-  .cart-floater-market{ font-size:1.15rem; }
-  .cart-floater-compare-row{ font-size:1.1rem; }
-  .cart-floater-btn, .cart-floater-visit{ padding:14px 16px; font-size:1.1rem; min-width:180px; }
+  .cart-floater{ width:92vw; left:50%; right:auto; transform:translate(-50%,120%); }
+  .cart-floater-label{ font-size:1.15rem; }
+  .cart-floater-values{ font-size:1.05rem; }
+  .cart-floater-market{ font-size:1.05rem; }
+  .cart-floater-compare-row{ font-size:1.02rem; }
+  .cart-floater-btn, .cart-floater-visit{ padding:12px 14px; font-size:1.02rem; min-width:160px; }
   .footer-inner{ grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }
+}
+
+/* Portrait fallback: reduz grade e dimensiona resumo/carrinho para telas em pé */
+@media (max-width: 820px) and (orientation: portrait){
+  .catalog-grid{ min-width:0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-grid.catalog-grid-mobile{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-shell{ overflow-x: hidden; }
+  .cart-panel{ width:90vw; right:5vw; max-height:78vh; }
+  .cart-title{ font-size:18px; }
+  .cart-meta{ font-size:13px; }
+  .cart-line-prices{ font-size:1.05rem; }
+  .cart-qty-btn{ width:36px; height:36px; font-size:19px; }
+  .cart-qty-value{ min-width:32px; font-size:1.08rem; }
+  .cart-summary{ font-size:1.05rem; padding:14px; }
+  .cart-summary strong{ font-size:1.2rem; }
+  .cart-floater{ width:90vw; left:50%; transform:translate(-50%,120%); }
+  .cart-floater-label{ font-size:1.1rem; }
+  .cart-floater-values{ font-size:1rem; }
+  .cart-floater-market{ font-size:1rem; }
+  .cart-floater-compare-row{ font-size:1rem; }
+  .cart-floater-btn, .cart-floater-visit{ padding:12px 14px; font-size:1rem; min-width:150px; }
+}
+
+/* Floater compacto e seguro em retrato */
+@media (max-width: 768px) and (orientation: portrait){
+  .cart-floater{
+    width: calc(100vw - 16px);
+    max-width: 640px;
+    left:50%;
+    right:auto;
+    transform: translate(-50%, 120%);
+    padding:12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .cart-floater-inner{ gap:8px; }
+  .cart-floater-main{ gap:10px; flex-wrap:wrap; }
+  .cart-floater-meta{ gap:4px; min-width:0; }
+  .cart-floater-label{ font-size:1rem; flex-wrap:wrap; }
+  .cart-floater-values,
+  .cart-floater-market,
+  .cart-floater-compare-row{ font-size:0.95rem; }
+  .cart-floater-compare{ gap:4px; }
+  .cart-floater-compare-row{ padding:6px 8px; gap:6px; flex-wrap:wrap; }
+  .cart-floater-compare-row .tag{ font-size:0.72rem; }
+  .cart-floater-actions{
+    gap:6px;
+    align-items:stretch;
+    width:100%;
+  }
+  .cart-floater-btn, .cart-floater-visit{
+    width:100%;
+    min-width:0;
+    padding:10px 12px;
+    font-size:1rem;
+  }
+  .cart-floater-label,
+  .cart-floater-values,
+  .cart-floater-market{ min-width:0; }
 }
 
 @media (max-width: 640px){
@@ -1081,8 +1235,108 @@ body {
   .page-section{ padding:24px 14px; }
   .catalog-shell{ padding:12px; }
   .cart-panel{ width:90vw; right:5vw; }
-  .cart-floater{ width:92vw; left:4vw; transform:translateY(120%); }
   .footer-inner{ grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }
+}
+
+/* CART FLOATER - reset base (desktop e paisagem) */
+.cart-floater{
+  position:fixed;
+  bottom:16px;
+  left:50%;
+  transform:translate(-50%, 120%);
+  width:min(520px, 90vw);
+  max-width:520px;
+  box-sizing:border-box;
+  background: linear-gradient(160deg, rgba(18,24,40,0.92), rgba(15,23,42,0.9));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  box-shadow:0 16px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(34,197,94,0.15);
+  backdrop-filter: blur(12px);
+  padding:14px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity:0;
+  z-index:998;
+}
+.cart-floater.show{ transform:translate(-50%, 0); opacity:1; }
+.cart-floater-inner{ display:flex; flex-direction:column; gap:10px; width:100%; box-sizing:border-box; }
+.cart-floater-main{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; width:100%; }
+.cart-floater-meta{ display:flex; flex-direction:column; gap:6px; min-width:0; flex:1; }
+.cart-floater-chip{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 10px;
+  border-radius:999px; border:1px solid rgba(34,197,94,0.4); background:rgba(34,197,94,0.15);
+  color:var(--accent-green); font-weight:750; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em;
+}
+.cart-floater-chip span{ display:inline-block; }
+.cart-floater-label{
+  font-weight:850; font-size:1.05rem; letter-spacing:0.01em;
+  display:flex; align-items:center; gap:8px; min-width:0; flex-wrap:wrap;
+}
+.cart-floater-label .icon{ font-size:1.15rem; }
+.cart-floater-values, .cart-floater-market{
+  display:flex; align-items:center; gap:8px; min-width:0; flex-wrap:wrap;
+}
+.cart-floater-values{ color:var(--text-muted); font-size:0.95rem; }
+.cart-floater-values .icon{ font-size:1rem; }
+.cart-floater-market{ color:var(--accent-green); font-weight:750; font-size:0.95rem; }
+.cart-floater-market .icon{ font-size:1rem; }
+.cart-floater-compare{ display:flex; flex-direction:column; gap:6px; margin-top:6px; }
+.cart-floater-compare-row{
+  display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:10px;
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+  font-size:0.92rem; min-width:0; flex-wrap:wrap;
+}
+.cart-floater-compare-row.best{ border-color:rgba(34,197,94,0.6); background:rgba(34,197,94,0.12); box-shadow:0 0 0 1px rgba(34,197,94,0.15); }
+.cart-floater-compare .tag{ display:inline-flex; align-items:center; justify-content:center; padding:4px 8px; border-radius:8px; font-weight:750; background:rgba(255,255,255,0.08); font-size:0.75rem; }
+.cart-floater-actions{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+.cart-floater-btn{
+  background:var(--accent-green); color:#020617; border:none; padding:10px 14px;
+  border-radius:12px; font-weight:800; cursor:pointer; min-width:140px; box-sizing:border-box;
+}
+.cart-floater-visit{
+  background:linear-gradient(120deg, rgba(34,197,94,0.25), rgba(34,197,94,0.5));
+  color:#020617; border:none; padding:10px 14px; border-radius:12px; font-weight:800;
+  cursor:pointer; min-width:140px; box-sizing:border-box; box-shadow:0 10px 30px rgba(34,197,94,0.18);
+}
+
+/* Floater compacto e seguro em retrato (mobile) */
+@media (max-width: 768px) and (orientation: portrait){
+  .cart-floater{
+    width: calc(100vw - 28px);
+    max-width: 420px;
+    left:50%;
+    transform: translate(-50%, 120%);
+    padding:9px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .cart-floater-inner{ gap:6px; }
+  .cart-floater-main{ gap:8px; }
+  .cart-floater-meta{ gap:3px; }
+  .cart-floater-label{ font-size:0.94rem; }
+  .cart-floater-values, .cart-floater-market{ font-size:0.88rem; }
+  .cart-floater-compare{ gap:3px; }
+  .cart-floater-compare-row{ font-size:0.88rem; padding:6px 8px; gap:6px; }
+  .cart-floater-compare .tag{ font-size:0.7rem; }
+  .cart-floater-actions{ width:100%; align-items:stretch; gap:4px; }
+  .cart-floater-btn, .cart-floater-visit{ width:100%; min-width:0; padding:9px 12px; font-size:0.92rem; }
+
+  /* Garantir catálogo sem corte lateral em retrato */
+  .catalog-grid,
+  .catalog-grid.catalog-grid-mobile{
+    min-width:0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .catalog-shell,
+  .page-section{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+    padding-inline:16px;
+  }
+  body, html{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
 }
 </style>
 </head>
@@ -1137,6 +1391,7 @@ body {
   <div class="cart-items" id="cartItems"></div>
 </div>
 
+<button class="floater-toggle" id="floaterToggle" type="button" aria-label="Mostrar resumo">▲</button>
 <div class="cart-floater" id="cartFloater">
   <div class="cart-floater-inner">
       <div class="cart-floater-main">
@@ -1393,6 +1648,9 @@ const cartPanel = document.getElementById('cartPanel');
 const cartCloseBtn = document.getElementById('cartCloseBtn');
 const cartItemsEl = document.getElementById('cartItems');
 const cartFloater = document.getElementById('cartFloater');
+const floaterToggle = document.getElementById('floaterToggle');
+let floaterVisible = false;
+const floaterToggleDefaultBottom = '70px';
 const floaterCount = document.getElementById('floaterCount');
 const floaterTotal = document.getElementById('floaterTotal');
 const floaterBest = document.getElementById('floaterBest');
@@ -1663,7 +1921,6 @@ function render(){
       <div class="catalog-card">
         <div class="catalog-meta">
           ${tags}
-          <span class="catalog-price">${escapeHtml(p.preco)}</span>
         </div>
         <div class="catalog-thumb" id="${cid}_wrap">
           ${hasImg
@@ -1676,6 +1933,7 @@ function render(){
           }
         </div>
         <p class="catalog-name">${escapeHtml(p.nome)}</p>
+        <div class="catalog-price-strong">${escapeHtml(p.preco)}</div>
         <div class="catalog-actions">
           <div class="qty-control">
             <button class="qty-btn" type="button" data-qty="dec" data-key="${pid}">-</button>
@@ -1832,6 +2090,11 @@ function updateCartFloater(){
   if (!cartFloater) return;
   if (!cart.size){
     cartFloater.classList.remove('show');
+    if (floaterToggle){
+      floaterToggle.dataset.state = 'closed';
+      floaterToggle.textContent = '▲';
+    }
+    floaterVisible = false;
     return;
   }
 
@@ -1867,7 +2130,19 @@ function updateCartFloater(){
     `).join('');
   }
 
-  cartFloater.classList.add('show');
+  if (floaterVisible) cartFloater.classList.add('show');
+  else cartFloater.classList.remove('show');
+
+  if (floaterToggle){
+    if (floaterVisible && cartFloater.offsetHeight){
+      const h = cartFloater.offsetHeight;
+      floaterToggle.style.bottom = `${h + 24}px`;
+      floaterToggle.classList.add('docked');
+    }else{
+      floaterToggle.style.bottom = floaterToggleDefaultBottom;
+      floaterToggle.classList.remove('docked');
+    }
+  }
 }
 
 function flashAdded(btn){
@@ -1879,6 +2154,12 @@ function flashAdded(btn){
     btn.classList.remove('added');
     btn.textContent = original || 'Adicionar';
   }, 1200);
+
+  // feedback na seta do floater
+  if (floaterToggle){
+    floaterToggle.classList.add('flash-green');
+    setTimeout(() => floaterToggle.classList.remove('flash-green'), 500);
+  }
 }
 
 function addToCart(btn){
@@ -2503,6 +2784,28 @@ floaterVisitSite?.addEventListener('click', () => {
     location.href = SITE_URL;
   }
 });
+floaterToggle?.addEventListener('click', () => {
+  if (!cart.size){
+    floaterToggle.classList.add('alert');
+    setTimeout(() => floaterToggle.classList.remove('alert'), 700);
+    document.getElementById('catalogoProdutos')?.scrollIntoView({ behavior:'smooth', block:'start' });
+    return;
+  }
+  floaterVisible = !floaterVisible;
+  floaterToggle.dataset.state = floaterVisible ? 'open' : 'closed';
+  floaterToggle.textContent = floaterVisible ? '▼' : '▲';
+  if (floaterVisible) toggleCartPanel(false); // fecha carrinho se estiver aberto
+  updateCartFloater();
+});
+// ao abrir carrinho, minimiza o resumo
+floaterOpenCart?.addEventListener('click', () => {
+  floaterVisible = false;
+  if (floaterToggle){
+    floaterToggle.dataset.state = 'closed';
+    floaterToggle.textContent = '▲';
+  }
+  updateCartFloater();
+});
 
 footerBackBtn?.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2536,6 +2839,13 @@ randomizeBtn?.addEventListener('click', () => {
 =========================== */
 applyFilters();
 autoLoadSilent();
+// inicia floater escondido
+floaterVisible = false;
+if (floaterToggle){
+  floaterToggle.dataset.state = 'closed';
+  floaterToggle.textContent = '▲';
+  floaterToggle.style.bottom = floaterToggleDefaultBottom;
+}
 </script>
 
 </body>
