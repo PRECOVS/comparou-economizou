@@ -1270,6 +1270,10 @@ function getSectorValue(p){
   // Mantém o valor do setor em branco para não criar a opção "Setor livre" no filtro
   return raw;
 }
+function getSectorLabel(p){
+  const raw = getSectorValue(p);
+  return raw || 'Setor livre';
+}
 
 function sectorKey(val){
   return (val || '')
@@ -1364,8 +1368,9 @@ function render(){
     const hasImg = !!img;
     const safeImg = escapeHtml(img);
     const cid = `img_${page}_${idx}`;
-    const sectorLabel = getSectorValue(p);
-    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorLabel || ''}`);
+    const sectorLabel = getSectorLabel(p);
+    const sectorValue = getSectorValue(p);
+    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}`);
     const sectorPill = sectorLabel ? `<span class="catalog-pill">${escapeHtml(sectorLabel)}</span>` : '';
 
     return `
@@ -1396,7 +1401,7 @@ function render(){
             data-name="${escapeHtml(p.nome)}"
             data-price="${escapeHtml(p.preco)}"
             data-img="${safeImg}"
-            data-sector="${escapeHtml(sectorLabel || '')}">Adicionar</button>
+            data-sector="${escapeHtml(sectorLabel)}">Adicionar</button>
         </div>
       </div>
     `;
