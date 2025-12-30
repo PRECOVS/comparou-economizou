@@ -780,6 +780,58 @@ body {
   font-size:12px;
   color:var(--text-muted);
 }
+.cart-line-prices{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  font-weight:800;
+  color:var(--text-main);
+  margin-top:4px;
+}
+.cart-line-prices span:last-child{
+  margin-left:auto;
+  color:var(--accent-green);
+}
+.cart-qty-control{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+}
+.cart-qty-btn{
+  width:28px;
+  height:28px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:#0f172a;
+  color:var(--accent-green);
+  border-radius:8px;
+  font-weight:900;
+  font-size:16px;
+  cursor:pointer;
+}
+.cart-qty-btn:hover{ background:rgba(34,197,94,0.15); }
+.cart-qty-value{
+  min-width:26px;
+  text-align:center;
+  font-weight:800;
+  color:var(--text-main);
+}
+.cart-summary{
+  margin-top:10px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  background:rgba(15,23,42,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-weight:850;
+  color:var(--text-main);
+}
+.cart-summary strong{
+  color:var(--accent-green);
+  font-size:1.05rem;
+}
 .cart-remove{
   align-self:flex-start;
   background:rgba(239,68,68,0.12);
@@ -813,6 +865,11 @@ body {
   transform:translateX(-50%) translateY(0);
   opacity:1;
 }
+.cart-floater-inner{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 .cart-floater-main{
   display:flex;
   align-items:center;
@@ -824,9 +881,58 @@ body {
   flex-direction:column;
   gap:6px;
 }
-.cart-floater-label{ font-weight:850; font-size:1rem; letter-spacing:0.01em; }
-.cart-floater-values{ color:var(--text-muted); font-size:0.92rem; }
-.cart-floater-market{ color:var(--accent-green); font-weight:700; font-size:0.92rem; }
+.cart-floater-compare{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:6px;
+}
+.cart-floater-compare-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  font-size:0.92rem;
+}
+.cart-floater-compare-row.best{
+  border-color:rgba(34,197,94,0.6);
+  background:rgba(34,197,94,0.12);
+  box-shadow:0 0 0 1px rgba(34,197,94,0.15);
+}
+.cart-floater-compare .tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 8px;
+  border-radius:8px;
+  font-weight:750;
+  background:rgba(255,255,255,0.08);
+  font-size:0.75rem;
+}
+.cart-floater-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(34,197,94,0.4);
+  background:rgba(34,197,94,0.15);
+  color:var(--accent-green);
+  font-weight:750;
+  font-size:0.78rem;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+.cart-floater-chip span{ display:inline-block; }
+.cart-floater-label{ font-weight:850; font-size:1.05rem; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; }
+.cart-floater-label .icon{ font-size:1.15rem; }
+.cart-floater-values{ color:var(--text-muted); font-size:0.95rem; display:flex; align-items:center; gap:8px; }
+.cart-floater-values .icon{ font-size:1rem; }
+.cart-floater-market{ color:var(--accent-green); font-weight:750; font-size:0.95rem; display:flex; align-items:center; gap:8px; }
+.cart-floater-market .icon{ font-size:1rem; }
 .cart-floater-btn{
   background:var(--accent-green);
   color:#020617;
@@ -1019,15 +1125,19 @@ body {
 </div>
 
 <div class="cart-floater" id="cartFloater">
-  <div class="cart-floater-main">
-    <div class="cart-floater-meta">
-      <div class="cart-floater-label">Resumo rápido do carrinho</div>
-      <div class="cart-floater-values"><span id="floaterCount">0 itens</span> · <span id="floaterTotal">R$ 0,00</span></div>
-      <div class="cart-floater-market">Mercado mais barato (estimativa): <span id="floaterBest">-</span></div>
-    </div>
-    <div class="cart-floater-actions">
-      <button class="cart-floater-btn" id="floaterOpenCart" type="button">Ver carrinho</button>
-      <button class="cart-floater-visit" id="floaterVisitSite" type="button">Visitar o Site</button>
+  <div class="cart-floater-inner">
+      <div class="cart-floater-main">
+        <div class="cart-floater-meta">
+          <div class="cart-floater-chip"><span>⚡</span><span>Resumo</span></div>
+          <div class="cart-floater-label"><span class="icon">🛒</span><span>Seu carrinho em tempo real</span></div>
+          <div class="cart-floater-values"><span class="icon">📦</span><span id="floaterCount">0 itens</span> · <span id="floaterTotal">R$ 0,00</span></div>
+          <div class="cart-floater-market"><span class="icon">🏷️</span><span>Mercado mais barato (estimativa): <span id="floaterBest">-</span></span></div>
+          <div class="cart-floater-compare" id="floaterCompare"></div>
+        </div>
+        <div class="cart-floater-actions">
+          <button class="cart-floater-btn" id="floaterOpenCart" type="button">Ver carrinho</button>
+          <button class="cart-floater-visit" id="floaterVisitSite" type="button">Visitar o Site</button>
+        </div>
     </div>
   </div>
 </div>
@@ -1660,9 +1770,15 @@ function renderCartPanel(){
     return;
   }
   const entries = Array.from(cart.entries());
-  cartItemsEl.innerHTML = entries.map(([key, { product, qty }]) => {
+  let totalCart = 0;
+  const itemsHtml = entries.map(([key, { product, qty }]) => {
     const img = resolveImgPath(product.imagem);
     const sectionTag = product.secao ? `<span>${escapeHtml(product.secao || '')}</span>` : '';
+    const unitNumber = parsePriceToNumber(product.preco);
+    const lineTotal = unitNumber * (qty || 0);
+    totalCart += lineTotal;
+    const unitLabel = product.preco ? escapeHtml(product.preco) : escapeHtml(formatCurrency(unitNumber));
+    const lineLabel = escapeHtml(formatCurrency(lineTotal));
     return `
       <div class="cart-item" data-cart-key="${escapeHtml(key)}">
         <div class="cart-thumb">
@@ -1674,13 +1790,29 @@ function renderCartPanel(){
             <span>${escapeHtml(product.preco || '')}</span>
             <span>${escapeHtml(product.setor || '')}</span>
             ${sectionTag}
-            <span>Qtd: ${qty}</span>
+          </div>
+          <div class="cart-line-prices">
+            <span>${unitLabel} cada</span>
+            <span>${lineLabel}</span>
+          </div>
+          <div class="cart-qty-control">
+            <button class="cart-qty-btn" type="button" data-cart-qty="dec" data-cart-key="${escapeHtml(key)}">-</button>
+            <span class="cart-qty-value">${qty}</span>
+            <button class="cart-qty-btn" type="button" data-cart-qty="inc" data-cart-key="${escapeHtml(key)}">+</button>
           </div>
           <button class="cart-remove" type="button" data-remove-key="${escapeHtml(key)}">Remover</button>
         </div>
       </div>
     `;
   }).join('');
+
+  const summaryHtml = `
+    <div class="cart-summary">
+      <span>Total da compra</span>
+      <strong>${escapeHtml(formatCurrency(totalCart))}</strong>
+    </div>
+  `;
+  cartItemsEl.innerHTML = itemsHtml + summaryHtml;
 }
 
 function updateCartFloater(){
@@ -1700,6 +1832,27 @@ function updateCartFloater(){
   if (floaterCount) floaterCount.textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
   if (floaterTotal) floaterTotal.textContent = formatCurrency(total);
   if (floaterBest) floaterBest.textContent = count ? bestMarketEstimate(total) : '-';
+  const compareEl = document.getElementById('floaterCompare');
+  if (compareEl){
+    const markets = [
+      { name:'Mercado A', factor:1 },
+      { name:'Mercado B', factor:1.06 },
+      { name:'Mercado C', factor:1.12 },
+    ];
+    const mapped = markets.map(m => ({
+      ...m,
+      price: total * m.factor
+    })).sort((a,b) => a.price - b.price);
+    const bestPrice = mapped.length ? mapped[0].price : 0;
+    compareEl.innerHTML = mapped.map((m, idx) => `
+      <div class="cart-floater-compare-row ${idx === 0 ? 'best' : ''}">
+        <span class="tag">${idx === 0 ? '✓' : idx+1}</span>
+        <span>${escapeHtml(m.name)}</span>
+        <span style="margin-left:auto;">${escapeHtml(formatCurrency(m.price))}</span>
+        ${idx === 0 ? `<span class="tag">Vencedor</span>` : ''}
+      </div>
+    `).join('');
+  }
 
   cartFloater.classList.add('show');
 }
@@ -1778,6 +1931,22 @@ cartItemsEl?.addEventListener('click', (ev) => {
       updateCartCount();
       renderCartPanel();
     }
+  }
+
+  const qtyBtn = ev.target.closest('[data-cart-qty]');
+  if (qtyBtn){
+    const key = qtyBtn.dataset.cartKey;
+    if (!key || !cart.has(key)) return;
+    const entry = cart.get(key);
+    const delta = qtyBtn.dataset.cartQty === 'inc' ? 1 : -1;
+    const nextQty = (entry.qty || 0) + delta;
+    if (nextQty <= 0){
+      cart.delete(key);
+    }else{
+      cart.set(key, { ...entry, qty: nextQty });
+    }
+    updateCartCount();
+    renderCartPanel();
   }
 });
 
