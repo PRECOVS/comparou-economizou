@@ -85,13 +85,18 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 .header-container {
   max-width: 1400px;
   margin: auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
+  padding: 0 16px;
+  padding-right: 110px; /* reserva espaco para o widget do carrinho */
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .logo {
-  font-size: 1.8rem;
+  font-size: 2.4rem;
   font-weight: bold;
   color: white;
   letter-spacing: 0.03em;
@@ -99,7 +104,7 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 .logo span { color: var(--accent-green); }
 
 /* SEARCH */
-.search-box { flex: 1; display: flex; }
+.search-box { flex: 1; display: flex; min-width:0; }
 .search-box input {
   flex: 1;
   padding: 10px;
@@ -121,17 +126,8 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 .search-box button:hover { background: #3b3b3b; }
 
 /* ENDEREÇO */
-.endereco {
-  text-align: left;
-  font-size: 0.85rem;
-  line-height: 1.1rem;
-  color: #e5e5e5;
-  min-width: 140px;
-}
-.end-label { opacity: 0.6; }
-
 /* ICONS AREA */
-.account, .cart {
+.cart {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -139,7 +135,7 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   color: #e5e5e5;
   font-size: 0.9rem;
 }
-.account span, .cart span { white-space: nowrap; }
+.cart span { white-space: nowrap; }
 .icon { width: 22px; height: 22px; filter: invert(100%); }
 
 .cart { position: relative; }
@@ -415,8 +411,6 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 .catalog-filter select:focus{ border-color: rgba(34,197,94,0.6); box-shadow:0 0 0 1px rgba(34,197,94,0.35); }
 .catalog-section-filter.disabled{ opacity:0.6; }
 .catalog-section-filter.disabled select{ cursor:not-allowed; }
-.catalog-tags{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-.catalog-pill-alt{ background: rgba(34,197,94,0.16); }
 .catalog-search-box{
   display:flex;
   align-items:center;
@@ -516,25 +510,20 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   color: var(--text-muted);
   font-size:12px;
 }
-.catalog-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid #1f2937;
-  background: rgba(34,197,94,0.08);
-  color: var(--accent-green);
-  font-weight:700;
-  font-size:11px;
-  letter-spacing:0.02em;
-}
 .catalog-actions{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:4px;
   flex-wrap:wrap;
+  justify-content:flex-start;
   margin-top:auto;
+  background:#0c1220;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:4px;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
 }
 .qty-control{
   display:inline-flex;
@@ -544,17 +533,20 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   border-radius:10px;
   overflow:hidden;
   box-shadow: inset 0 0 0 1px rgba(34,197,94,0.12);
-  min-width:130px;
+  min-width:0;
+  flex:1 1 calc(100% - 42px); /* deixa espaço pro botão + */
+  width:100%;
 }
 .qty-btn{
-  width:36px;
-  height:36px;
+  width:auto;
+  height:21px;
+  flex:1 1 0;
   background:#0f172a;
   color:var(--accent-green);
   border:none;
   cursor:pointer;
   font-weight:900;
-  font-size:20px;
+  font-size:14px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -563,26 +555,43 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 .qty-btn + .qty-btn{ border-left:1px solid rgba(255,255,255,0.06); }
 .qty-btn:hover{ background:rgba(34,197,94,0.15); }
 .qty-input{
-  width:50px;
+  width:auto;
   background:#0f172a;
   border:none;
   text-align:center;
   color:var(--text-main);
   font-weight:700;
   outline:none;
-  height:36px;
+  height:21px;
+  padding:0;
+  line-height:21px;
+  flex:1 1 0;
+  min-width:0;
 }
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input{ -moz-appearance: textfield; }
 .catalog-add{
-  flex:1;
-  padding:10px 12px;
-  border-radius:12px;
+  flex:0 0 38px;
+  height:26px;
+  min-width:38px;
+  padding:0;
+  border-radius:8px;
   border:1px solid rgba(34,197,94,0.4);
   background: linear-gradient(120deg, rgba(34,197,94,0.15), rgba(34,197,94,0.32));
   color:var(--accent-strong);
-  font-weight:800;
+  font-weight:850;
   cursor:pointer;
   transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
   box-shadow:0 10px 25px rgba(34,197,94,0.15);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  line-height:1;
 }
 .catalog-add:hover{ transform: translateY(-1px); box-shadow:0 14px 30px rgba(34,197,94,0.25); }
 .catalog-add.added{
@@ -591,12 +600,52 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   animation: add-pop 0.5s ease;
   filter: drop-shadow(0 0 12px rgba(34,197,94,0.35));
 }
+.catalog-in-cart{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:rgba(239,68,68,0.18);
+  border:1px solid rgba(239,68,68,0.45);
+  color:#fca5a5;
+  font-weight:800;
+  font-size:0.9rem;
+  margin-top:0;
+  opacity:1;
+  transition:opacity 0.15s ease, transform 0.15s ease;
+  flex-shrink:0;
+}
 .catalog-grid.catalog-grid-mobile .catalog-card{ gap:14px; }
 .catalog-grid.catalog-grid-mobile .catalog-name{ font-size:clamp(1.15rem, 4vw, 1.45rem); line-height:1.3; }
 .catalog-grid.catalog-grid-mobile .catalog-meta{ font-size:0.95rem; }
 .catalog-grid.catalog-grid-mobile .qty-btn{ width:46px; height:46px; font-size:22px; color:var(--accent-green); }
-.catalog-grid.catalog-grid-mobile .qty-input{ width:68px; height:46px; font-size:1.05rem; }
-.catalog-grid.catalog-grid-mobile .catalog-add{ padding:13px 14px; font-size:1.05rem; }
+.catalog-grid.catalog-grid-mobile .qty-btn{ width:27px; height:27px; font-size:15px; }
+.catalog-grid.catalog-grid-mobile .qty-input{ width:40px; height:27px; font-size:0.9rem; }
+.catalog-grid.catalog-grid-mobile .catalog-add{
+  height:32px;
+  min-width:46px;
+  flex:0 0 46px;
+  padding:0;
+  font-size:1rem;
+  border-radius:10px;
+  line-height:1;
+}
+.catalog-grid.catalog-grid-mobile .catalog-actions{
+  padding:5px;
+  gap:6px;
+  justify-content:flex-start;
+  width:100%;
+}
+.catalog-grid.catalog-grid-mobile .qty-control{
+  flex:1 1 calc(100% - 52px); /* espaco pro + mobile */
+}
+.catalog-grid.catalog-grid-mobile .qty-btn,
+.catalog-grid.catalog-grid-mobile .qty-input{
+  flex:1 1 0;
+  min-width:0;
+}
 .catalog-grid.catalog-grid-mobile .catalog-price{ font-size:clamp(1.1rem, 3.8vw, 1.35rem); }
 .catalog-grid.catalog-grid-mobile .catalog-price-strong{ font-size:clamp(1.4rem, 5vw, 1.8rem); }
 
@@ -725,6 +774,46 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   margin-top:8px;
   box-shadow:0 10px 24px rgba(34,197,94,0.12);
 }
+.footer-brand{
+  max-width:900px;
+  margin:0 auto 26px auto;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.footer-logo{
+  font-size:1.8rem;
+  font-weight:800;
+  letter-spacing:0.04em;
+}
+.footer-logo span{ color:var(--accent-green); }
+.footer-search{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.footer-search input{
+  width:min(460px, 90vw);
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #1f2937;
+  background:#0f1220;
+  color:var(--text-main);
+}
+.footer-search input::placeholder{ color:var(--text-muted); }
+.footer-search button{
+  padding:12px 16px;
+  border-radius:12px;
+  border:none;
+  background:var(--accent-green);
+  color:#020617;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(34,197,94,0.2);
+}
+.footer-search button:hover{ box-shadow:0 14px 30px rgba(34,197,94,0.28); }
 .footer-bottom{
   margin-top:20px;
   padding-top:16px;
@@ -1076,14 +1165,14 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   text-align:center;
 }
 .catalog-name{
-  font-weight:800;
-  font-size:clamp(1rem, 1.05vw, 1.2rem);
+  font-weight:900;
+  font-size:clamp(0.94rem, 0.97vw, 1.11rem);
   line-height:1.25;
   margin:0;
   word-break:break-word;
-  min-height:2.6em;
+  min-height:3.9em;
   display:-webkit-box;
-  -webkit-line-clamp:2;
+  -webkit-line-clamp:3;
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
@@ -1094,8 +1183,15 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   margin-left:auto;
   font-size:clamp(1rem, 1vw, 1.25rem);
 }
-.catalog-price-strong{
+.catalog-price-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  justify-content:space-between;
+  flex-wrap:nowrap;
   margin-top:2px;
+}
+.catalog-price-strong{
   color:transparent;
   font-weight:900;
   font-size:clamp(1.2rem, 1.8vw, 1.5rem);
@@ -1103,6 +1199,7 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   min-height:1.6em;
   display:flex;
   align-items:center;
+   white-space:nowrap;
   background: linear-gradient(90deg, var(--accent-green), #32ff7e, var(--accent-green));
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -1290,14 +1387,14 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 @media (max-width: 640px){
   .top-header{ padding:10px; }
   .header-container{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:12px;
+    display:grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap:10px 12px;
+    justify-content:center;
+    padding-right:110px;
   }
-  .search-box{ width:100%; order:2; }
-  .logo{ order:1; }
-  .endereco, .account, .cart{ order:3; width:100%; justify-content:space-between; }
-  .endereco, .account, .cart{ width:100%; justify-content:space-between; }
+  .search-box{ width:100%; }
+  .logo{ font-size:1.9rem; }
   .hero{ gap:18px; }
   .page-section{ padding:24px 14px; }
   .catalog-shell{ padding:12px; }
@@ -1405,6 +1502,86 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
     overflow-x:hidden;
   }
 }
+
+/* Header e rodape alinhados em retrato (mobile) */
+@media (max-width: 540px) and (orientation: portrait){
+  .top-header{ padding:14px; }
+  .header-container{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "logo"
+      "search";
+    gap:10px;
+    align-items:center;
+    justify-items:center;
+    padding-right:0;
+  }
+  .logo{ grid-area:logo; font-size:2rem; text-align:center; width:100%; }
+  .search-box{
+    grid-area:search;
+    width:100%;
+    min-width:0;
+    max-width:360px;
+    justify-content:center;
+  }
+  .search-box input{ border-radius:10px 0 0 10px; }
+  .search-box button{ border-radius:0 10px 10px 0; }
+  .cart{
+    grid-area:cart;
+    justify-self:center;
+    background:#0d1117;
+    border:1px solid #1f2937;
+    padding:10px 12px;
+    border-radius:12px;
+  }
+  .cart-count{ top:-8px; right:-8px; }
+  .info-bar-inner{ align-items:flex-start; gap:8px; }
+
+  .site-footer{ padding:28px 14px 24px; }
+  .footer-inner{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .footer-col{
+    background:#0c1017;
+    border:1px solid #111827;
+    border-radius:14px;
+    padding:14px;
+  }
+  .footer-col h4{ margin-bottom:6px; }
+  .footer-col ul{ gap:4px; }
+  .footer-pill{
+    width:100%;
+    justify-content:center;
+    text-align:center;
+    margin-top:6px;
+  }
+  .footer-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+.footer-back-btn{ width:100%; text-align:center; }
+}
+
+/* Botao flutuante do carrinho (topo direita em todos os modos) */
+.cart{
+  position:fixed;
+  top:max(18px, env(safe-area-inset-top, 0px));
+  right:max(16px, env(safe-area-inset-right, 0px));
+  border-radius:10px;
+  padding:6px 8px;
+  width:auto;
+  z-index:1300;
+  background:rgba(13,17,23,0.94);
+  border:1px solid #1f2937;
+  box-shadow:0 16px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(34,197,94,0.15);
+}
+.cart span{ display:none; }
+.cart .icon{ width:18px; height:18px; }
+.cart-count{ top:-6px; right:-6px; }
 </style>
 </head>
 
@@ -1420,16 +1597,6 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
       <div class="search-box">
         <input id="globalSearch" type="text" placeholder="Pesquisar produtos...">
         <button id="globalSearchBtn" type="button">Buscar</button>
-      </div>
-
-      <div class="endereco">
-        <span class="end-label">Entrega em:</span>
-        <span id="enderecoCliente">Selecionar endereço</span>
-      </div>
-
-      <div class="account">
-        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon" alt="Conta">
-        <span>Minha Conta</span>
       </div>
 
       <div class="cart">
@@ -1627,6 +1794,13 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
 </div>
 
 <footer class="site-footer" id="rodape">
+  <div class="footer-brand">
+    <div class="footer-logo">Preço<span>Vs</span></div>
+    <div class="footer-search">
+      <input type="text" placeholder="Pesquisar produtos...">
+      <button type="button">Buscar</button>
+    </div>
+  </div>
   <div class="footer-inner">
     <div class="footer-col">
       <h4>Sobre o PreçoVs</h4>
@@ -1985,15 +2159,9 @@ function render(){
     const sectorLabel = sectorValue;
     const sectionLabel = getSectionValue(p);
     const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}||${sectionLabel || ''}`);
-    const sectorPill = sectorLabel ? `<span class="catalog-pill">${escapeHtml(sectorLabel)}</span>` : '';
-    const sectionPill = sectionLabel ? `<span class="catalog-pill catalog-pill-alt">${escapeHtml(sectionLabel)}</span>` : '';
-    const tags = `<div class="catalog-tags">${sectorPill}${sectionPill}</div>`;
-
     return `
-      <div class="catalog-card">
-        <div class="catalog-meta">
-          ${tags}
-        </div>
+      <div class="catalog-card" data-key="${pid}">
+        <div class="catalog-meta"></div>
         <div class="catalog-thumb" id="${cid}_wrap">
           ${hasImg
             ? `<img id="${cid}" src="${safeImg}" alt="Imagem do produto" loading="lazy"
@@ -2005,7 +2173,10 @@ function render(){
           }
         </div>
         <p class="catalog-name">${escapeHtml(p.nome)}</p>
-        <div class="catalog-price-strong">${escapeHtml(p.preco)}</div>
+        <div class="catalog-price-row">
+          <div class="catalog-price-strong">${escapeHtml(p.preco)}</div>
+          <div class="catalog-in-cart" data-cart-badge="${pid}" hidden></div>
+        </div>
         <div class="catalog-actions">
           <div class="qty-control">
             <button class="qty-btn" type="button" data-qty="dec" data-key="${pid}">-</button>
@@ -2018,7 +2189,7 @@ function render(){
             data-price="${escapeHtml(p.preco)}"
             data-img="${safeImg}"
             data-sector="${escapeHtml(sectorLabel)}"
-            data-section="${escapeHtml(sectionLabel)}">Adicionar</button>
+            data-section="${escapeHtml(sectionLabel)}">+</button>
         </div>
       </div>
     `;
@@ -2027,6 +2198,24 @@ function render(){
   prevBtn.disabled = page <= 1;
   nextBtn.disabled = page >= pages;
   pageInfo.textContent = '';
+  updateCatalogCartBadges();
+}
+
+function updateCatalogCartBadges(){
+  const badges = document.querySelectorAll('[data-cart-badge]');
+  badges.forEach((badge) => {
+    const key = badge.dataset.cartBadge;
+    const qty = (key && cart.has(key)) ? (cart.get(key)?.qty || 0) : 0;
+    if (qty > 0){
+      badge.textContent = qty;
+      badge.hidden = false;
+      badge.style.opacity = '1';
+    }else{
+      badge.textContent = '';
+      badge.hidden = false;
+      badge.style.opacity = '0';
+    }
+  });
 }
 
 function updateCartCount(){
@@ -2040,6 +2229,7 @@ function updateCartCount(){
   cartCountEl.classList.remove('bump');
   void cartCountEl.offsetWidth; // reflow to restart animation
   cartCountEl.classList.add('bump');
+  updateCatalogCartBadges();
   updateCartFloater();
 }
 
@@ -2219,13 +2409,10 @@ function updateCartFloater(){
 
 function flashAdded(btn){
   if (!btn) return;
-  const original = btn.textContent;
   btn.classList.add('added');
-  btn.textContent = 'Adicionado';
   setTimeout(() => {
     btn.classList.remove('added');
-    btn.textContent = original || 'Adicionar';
-  }, 1200);
+  }, 800);
 
   // feedback na seta do floater
   if (floaterToggle){
@@ -2258,6 +2445,7 @@ function addToCart(btn){
   updateCartCount();
   renderCartPanel();
   flashAdded(btn);
+  if (qtyInput) qtyInput.value = 1; // reseta quantidade apos adicionar
 }
 
 prevBtn.addEventListener('click', () => { if (page > 1){ page--; render(); }});
@@ -2270,7 +2458,25 @@ gridEl.addEventListener('click', (ev) => {
     const input = control ? control.querySelector('.qty-input') : null;
     if (input){
       let val = parseInt(input.value, 10) || 1;
-      val = qtyBtn.dataset.qty === 'inc' ? val + 1 : Math.max(1, val - 1);
+      const key = qtyBtn.dataset.key;
+      const isDec = qtyBtn.dataset.qty === 'dec';
+
+      // Se já existe no carrinho, permite decrementar mesmo quando input está em 1
+      if (isDec && val <= 1 && key && cart.has(key)){
+        const entry = cart.get(key);
+        const nextQty = Math.max(0, (entry.qty || 0) - 1);
+        if (nextQty <= 0){
+          cart.delete(key);
+        }else{
+          cart.set(key, { ...entry, qty: nextQty });
+        }
+        updateCartCount();
+        renderCartPanel();
+        updateCartFloater();
+        updateCatalogCartBadges();
+      }
+
+      val = isDec ? Math.max(1, val - 1) : val + 1;
       input.value = val;
     }
   }
