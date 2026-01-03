@@ -693,8 +693,7 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
     padding:12px 14px;
   }
   .catalog-search-clear{
-    font-size:1.05rem;
-    padding:10px 14px;
+    display:none;
   }
   .catalog-randomize-top button{
     width:100%;
@@ -1151,12 +1150,27 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
 }
 .catalog-thumb img{
   width:100%;
   height:100%;
   object-fit:contain;
   display:block;
+}
+.catalog-ean-top{
+  align-self:flex-start;
+  background: linear-gradient(135deg, rgba(17,24,39,0.8), rgba(6,8,15,0.8));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;
+  padding:3px 7px;
+  font-size:10px;
+  letter-spacing:0.02em;
+  color: rgba(229,229,229,0.7);
+  backdrop-filter: blur(3px);
+  margin-bottom:6px;
+  box-shadow: inset 0 0 0 1px rgba(34,197,94,0.08), 0 4px 14px rgba(0,0,0,0.25);
+  opacity:0.72;
 }
 .catalog-noimg{
   font-size:12px;
@@ -1223,7 +1237,13 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   background: rgba(2,6,23,0.85);
   border-radius: 14px;
 }
-.catalog-pager .info{ display:none; }
+.catalog-pager .info{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color: var(--text-muted);
+  font-weight:700;
+}
 .catalog-randomize{
   text-align:center;
   margin-top:10px;
@@ -1797,8 +1817,8 @@ html { width:100%; max-width:100%; overflow-x:hidden; }
   <div class="footer-brand">
     <div class="footer-logo">Preço<span>Vs</span></div>
     <div class="footer-search">
-      <input type="text" placeholder="Pesquisar produtos...">
-      <button type="button">Buscar</button>
+      <input id="footerSearch" type="text" placeholder="Pesquisar produtos...">
+      <button id="footerSearchBtn" type="button">Buscar</button>
     </div>
   </div>
   <div class="footer-inner">
@@ -1885,6 +1905,8 @@ const globalSearch = document.getElementById('globalSearch');
 const globalSearchBtn = document.getElementById('globalSearchBtn');
 const catalogSearch = document.getElementById('catalogSearch');
 const catalogSearchClear = document.getElementById('catalogSearchClear');
+const footerSearch = document.getElementById('footerSearch');
+const footerSearchBtn = document.getElementById('footerSearchBtn');
 const sectorFilter = document.getElementById('sectorFilter');
 const sectionFilter = document.getElementById('sectionFilter');
 const sectionFilterWrap = document.getElementById('sectionFilterWrap');
@@ -1905,6 +1927,8 @@ const floaterVisitSite = document.getElementById('floaterVisitSite');
 const SITE_URL = (location.origin && location.origin !== 'null') ? location.origin : 'https://';
 const randomizeBtn = document.getElementById('randomizeBtn');
 const footerBackBtn = document.getElementById('footerBackBtn');
+const DEFAULT_INITIAL_SECTOR = 'Mercearia Salgada';
+let sectorDefaulted = false;
 
 const DEFAULT_SECTORS = [
   'Mercearia Salgada','Mercearia Doce','Saudáveis','Bebidas','Perfumaria','Bazar',
@@ -1915,6 +1939,11 @@ const cart = new Map();
 let sectorOptionsSignature = '';
 let sectionOptionsSignature = '';
 const sectorHints = new Set();
+let autoRandomized = false;
+
+function scrollToCatalog(){
+  document.getElementById('catalogoProdutos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function setStatus(msg){ statusEl.textContent = msg; }
 function setDebug(html){ debugEl.innerHTML = html; }
@@ -2026,6 +2055,19 @@ function decodeSectionValue(val){
   try{ return decodeURIComponent(val); }catch{ return val; }
 }
 
+function normalizeEan(val){
+  return (val ?? '').toString().replace(/\D/g, '');
+}
+function getProductEan(p){
+  const fields = ['ean','codigo','codigo_ean','codigoean','codigo_de_barras','codigobarras','codbarras','gtin'];
+  for (const f of fields){
+    const v = p?.[f];
+    const clean = normalizeEan(v);
+    if (clean) return clean;
+  }
+  return '';
+}
+
 function buildSectorOptions(){
   if (!sectorFilter) return;
   const sectorMap = new Map();
@@ -2053,7 +2095,11 @@ function buildSectorOptions(){
   const opts = ['<option value="__all">Todos os setores</option>', ...arr.map(s => `<option value="${encodeSectorValue(s)}">${escapeHtml(s)}</option>`)];
   sectorFilter.innerHTML = opts.join('');
   const hasCurrent = currentRaw !== '__all' && arr.includes(currentRaw);
-  sectorFilter.value = hasCurrent ? encodeSectorValue(currentRaw) : '__all';
+  const preferDefault = !sectorDefaulted && arr.includes(DEFAULT_INITIAL_SECTOR);
+  const nextVal = preferDefault ? encodeSectorValue(DEFAULT_INITIAL_SECTOR)
+    : (hasCurrent ? encodeSectorValue(currentRaw) : '__all');
+  sectorFilter.value = nextVal;
+  if (preferDefault) sectorDefaulted = true;
   sectorOptionsSignature = sig;
 }
 function buildSectionOptions(selectedSectorRaw){
@@ -2100,7 +2146,8 @@ function buildSectionOptions(selectedSectorRaw){
 function currentQuery(){
   const qCat = (catalogSearch?.value || '').trim();
   const qGlobal = (globalSearch?.value || '').trim();
-  return (qCat || qGlobal).toLowerCase();
+  const qFooter = (footerSearch?.value || '').trim();
+  return (qCat || qGlobal || qFooter).toLowerCase();
 }
 
 function applyFilters(){
@@ -2108,6 +2155,7 @@ function applyFilters(){
   const selectedSectorRaw = sectorFilter ? decodeSectorValue(sectorFilter.value) : '__all';
   buildSectionOptions(selectedSectorRaw);
   const q = currentQuery();
+  const qDigits = q.replace(/\D/g,'');
   const selKey = sectorKey(selectedSectorRaw);
   const selectedSectionRaw = sectionFilter ? decodeSectionValue(sectionFilter.value) : '__all';
   const selSectionKey = sectionKey(selectedSectionRaw);
@@ -2116,7 +2164,13 @@ function applyFilters(){
     const secVal = getSectorValue(p);
     if (!secVal) return false; // ignora produtos sem setor
     const sectionVal = getSectionValue(p);
-    const matchesText = !q || (p.nome || '').toLowerCase().includes(q);
+    const nameNorm = (p.nome || '').toLowerCase();
+    const priceNorm = (p.preco || '').toLowerCase();
+    const eanVal = getProductEan(p);
+    const matchesText = !q
+      || nameNorm.includes(q)
+      || priceNorm.includes(q)
+      || (qDigits && eanVal.includes(qDigits));
     const matchesSector = !selectedSectorRaw || selectedSectorRaw === '__all'
       ? true
       : (sectorKey(secVal) === selKey);
@@ -2158,11 +2212,15 @@ function render(){
     const sectorValue = getSectorValue(p);
     const sectorLabel = sectorValue;
     const sectionLabel = getSectionValue(p);
-    const pid = escapeHtml(`${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${sectorValue || ''}||${sectionLabel || ''}`);
+    const ean = getProductEan(p);
+    const pidRaw = productKey(p);
+    const pid = escapeHtml(pidRaw);
     return `
       <div class="catalog-card" data-key="${pid}">
         <div class="catalog-meta"></div>
+        ${ean ? `<div class="catalog-ean-top">EAN ${escapeHtml(ean)}</div>` : ''}
         <div class="catalog-thumb" id="${cid}_wrap">
+          
           ${hasImg
             ? `<img id="${cid}" src="${safeImg}" alt="Imagem do produto" loading="lazy"
                  onerror="(function(){
@@ -2197,7 +2255,7 @@ function render(){
 
   prevBtn.disabled = page <= 1;
   nextBtn.disabled = page >= pages;
-  pageInfo.textContent = '';
+  pageInfo.textContent = `${page} / ${pages}`;
   updateCatalogCartBadges();
 }
 
@@ -2711,13 +2769,15 @@ function detectCols(headerRow){
   const idxImg  = h.findIndex(x => x === 'imagem' || x.includes('imagem') || x.includes('foto') || x.includes('image') || x === 'img');
   const idxSetor = h.findIndex(x => x === 'setor' || x === 'setores' || x.includes('categoria') || x.includes('departamento') || x.includes('setor'));
   const idxSecao = h.findIndex(x => x === 'secao' || x.includes('secao') || x.includes('subsetor') || x.includes('sessao'));
+  const idxEan = h.findIndex(x => x === 'ean' || x.includes('ean') || x.includes('codigodebarras') || x.includes('codbarras') || x.includes('barcode') || x.includes('gtin'));
 
   return {
     nome: idxNome >= 0 ? idxNome : 2,
     preco: idxPreco >= 0 ? idxPreco : 3,
     img: idxImg >= 0 ? idxImg : 4,
     setor: idxSetor >= 0 ? idxSetor : -1,
-    secao: idxSecao >= 0 ? idxSecao : -1
+    secao: idxSecao >= 0 ? idxSecao : -1,
+    ean: idxEan >= 0 ? idxEan : -1
   };
 }
 
@@ -2801,6 +2861,8 @@ async function parseXlsxCatalog(fileLike){
     const imagem = (r[cols.img] ?? '').toString().trim();
     const setor = cols.setor >= 0 ? (r[cols.setor] ?? '').toString().trim() : '';
     const secao = cols.secao >= 0 ? (r[cols.secao] ?? '').toString().trim() : '';
+    const eanRaw = cols.ean >= 0 ? (r[cols.ean] ?? '').toString().trim() : '';
+    const ean = normalizeEan(eanRaw);
 
     if (!nome){
       emptyStreak++;
@@ -2808,7 +2870,7 @@ async function parseXlsxCatalog(fileLike){
       continue;
     }
     emptyStreak = 0;
-    out.push({ nome, preco, imagem, setor, secao });
+    out.push({ nome, preco, imagem, setor, secao, ean });
   }
 
     if (out.length) return { items: out };
@@ -2816,10 +2878,16 @@ async function parseXlsxCatalog(fileLike){
   return { items: [] };
 }
 
+function productKey(p){
+  const ean = getProductEan(p);
+  if (ean) return `ean:${ean}`;
+  return `${p.nome || ''}||${p.preco || ''}||${p.imagem || ''}||${getSectorValue(p)}||${getSectionValue(p)}`;
+}
+
 function dedupeProducts(arr){
   const seen = new Set();
   return arr.filter(p => {
-    const k = `${p.nome}||${p.preco}||${p.imagem}||${getSectorValue(p)}||${getSectionValue(p)}`;
+    const k = productKey(p);
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
@@ -2847,7 +2915,7 @@ function normalizeIndexJson(j){
 const FETCH_CONCURRENCY = 6;   // downloads simultâneos
 const PARSE_CONCURRENCY = 2;   // parses simultâneos (CPU)
 const RENDER_THROTTLE_MS = 180;
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 5;
 
 async function pool(limit, list, worker){
   const ret = new Array(list.length);
@@ -2909,7 +2977,31 @@ function renderThrottled(){
   applyFilters();
 }
 
+function shuffleItems(baseList){
+  const source = baseList && baseList.length ? baseList : itemsAll;
+  const shuffle = (arr) => arr
+    .map(p => ({ p, sort: Math.random() }))
+    .sort((a,b) => a.sort - b.sort)
+    .map(({p}) => p);
+  const withImg = [];
+  const withoutImg = [];
+  for (const p of source){
+    (hasImage(p) ? withImg : withoutImg).push(p);
+  }
+  return [...shuffle(withImg), ...shuffle(withoutImg)];
+}
+
+function randomizeProducts(){
+  if (!itemsAll.length) return false;
+  if (!itemsBase.length) itemsBase = [...itemsAll];
+  itemsAll = shuffleItems(itemsBase);
+  applyFilters();
+  autoRandomized = true;
+  return true;
+}
+
 async function loadFromFilesProgressive(fileLikes){
+  autoRandomized = false;
   itemsAll = [];
   applyFilters();
 
@@ -2922,6 +3014,7 @@ async function loadFromFilesProgressive(fileLikes){
         if (sectorHint) sectorHints.add(sectorHint);
         const mapped = res.items.map(it => ({
           ...it,
+          ean: normalizeEan(it.ean || it.codigo || it.codigo_ean || it.codigoean || it.codigo_de_barras || it.codigobarras || it.codbarras || it.gtin),
           setor: it.setor || it.sector || it.categoria || it.departamento || sectorHint,
           secao: it.secao || it.section || it.subsetor || sectionHint
         }));
@@ -2938,7 +3031,7 @@ async function loadFromFilesProgressive(fileLikes){
   itemsAll = dedupeProducts(itemsAll);
   itemsAll = prioritizeImages(itemsAll);
   itemsBase = [...itemsAll];
-  applyFilters();
+  randomizeProducts() || applyFilters();
 }
 
 async function loadFromFiles(fileLikes){
@@ -2964,7 +3057,7 @@ async function autoLoadSilent(){
   if (cached && cached.length){
     itemsAll = cached;
     itemsBase = [...itemsAll];
-    applyFilters();
+    randomizeProducts() || applyFilters();
     return;
   }
 
@@ -2993,6 +3086,7 @@ async function autoLoadSilent(){
     itemsAll = prioritizeImages(itemsAll);
     itemsBase = [...itemsAll];
     cacheWrite(cKey, itemsAll);
+    randomizeProducts() || applyFilters();
   }
 }
 
@@ -3004,23 +3098,36 @@ btnLoad.addEventListener('click', async () => {
   await loadFromFiles(files);
 });
 
-function syncGlobalToCatalog(){
-  if (catalogSearch && globalSearch) catalogSearch.value = globalSearch.value;
+function syncGlobalToCatalog(val, opts = {}){
+  const next = typeof val === 'string' ? val : (globalSearch?.value || '');
+  if (globalSearch && globalSearch.value !== next) globalSearch.value = next;
+  if (catalogSearch && catalogSearch.value !== next) catalogSearch.value = next;
+  if (footerSearch && footerSearch.value !== next) footerSearch.value = next;
   if (itemsBase.length) itemsAll = [...itemsBase];
   applyFilters();
+  if (opts.scroll) scrollToCatalog();
 }
 
-globalSearch.addEventListener('input', syncGlobalToCatalog);
-globalSearchBtn.addEventListener('click', syncGlobalToCatalog);
-catalogSearch?.addEventListener('input', () => {
-  if (globalSearch) globalSearch.value = catalogSearch.value;
-  applyFilters();
-});
+const bindEnter = (input, handler) => {
+  input?.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') handler();
+  });
+};
+
+globalSearch?.addEventListener('input', () => syncGlobalToCatalog(globalSearch.value));
+globalSearchBtn?.addEventListener('click', () => syncGlobalToCatalog(globalSearch.value, { scroll: true }));
+bindEnter(globalSearch, () => syncGlobalToCatalog(globalSearch?.value || '', { scroll: true }));
+
+catalogSearch?.addEventListener('input', () => syncGlobalToCatalog(catalogSearch.value));
 catalogSearchClear?.addEventListener('click', () => {
-  if (catalogSearch) catalogSearch.value = '';
-  if (globalSearch) globalSearch.value = '';
-  applyFilters();
+  syncGlobalToCatalog('');
 });
+bindEnter(catalogSearch, () => syncGlobalToCatalog(catalogSearch?.value || '', { scroll: true }));
+
+footerSearch?.addEventListener('input', () => syncGlobalToCatalog(footerSearch.value));
+footerSearchBtn?.addEventListener('click', () => syncGlobalToCatalog(footerSearch.value, { scroll: true }));
+bindEnter(footerSearch, () => syncGlobalToCatalog(footerSearch?.value || '', { scroll: true }));
+
 sectorFilter?.addEventListener('change', () => {
   if (sectionFilter){
     sectionFilter.value = '__all';
@@ -3097,19 +3204,7 @@ document.querySelector('.sectors-grid')?.addEventListener('click', (ev) => {
 });
 
 randomizeBtn?.addEventListener('click', () => {
-  if (!itemsAll.length) return;
-  if (!itemsBase.length) itemsBase = [...itemsAll];
-  const shuffle = (arr) => arr
-    .map(p => ({ p, sort: Math.random() }))
-    .sort((a,b) => a.sort - b.sort)
-    .map(({p}) => p);
-  const withImg = [];
-  const withoutImg = [];
-  for (const p of itemsBase){
-    (hasImage(p) ? withImg : withoutImg).push(p);
-  }
-  itemsAll = [...shuffle(withImg), ...shuffle(withoutImg)];
-  applyFilters();
+  if (randomizeProducts()) autoRandomized = true;
 });
 
 /* ===========================
