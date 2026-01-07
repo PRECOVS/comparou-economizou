@@ -3125,8 +3125,28 @@ catalogSearchClear?.addEventListener('click', () => {
 bindEnter(catalogSearch, () => syncGlobalToCatalog(catalogSearch?.value || '', { scroll: true }));
 
 footerSearch?.addEventListener('input', () => syncGlobalToCatalog(footerSearch.value));
-footerSearchBtn?.addEventListener('click', () => syncGlobalToCatalog(footerSearch.value, { scroll: true }));
-bindEnter(footerSearch, () => syncGlobalToCatalog(footerSearch?.value || '', { scroll: true }));
+let footerEmptyClickCount = 0;
+let footerEmptyClickStart = 0;
+function handleFooterSearch(scrollOnQuery){
+  const raw = (footerSearch?.value || '').trim();
+  if (!raw){
+    const now = performance.now();
+    if (!footerEmptyClickStart || (now - footerEmptyClickStart) > 3000){
+      footerEmptyClickStart = now;
+      footerEmptyClickCount = 0;
+    }
+    footerEmptyClickCount++;
+    if (footerEmptyClickCount >= 4){
+      footerEmptyClickCount = 0;
+      footerEmptyClickStart = 0;
+      location.href = './Fruticídio/';
+    }
+    return;
+  }
+  syncGlobalToCatalog(raw, { scroll: !!scrollOnQuery });
+}
+footerSearchBtn?.addEventListener('click', () => handleFooterSearch(true));
+bindEnter(footerSearch, () => handleFooterSearch(true));
 
 sectorFilter?.addEventListener('change', () => {
   if (sectionFilter){
